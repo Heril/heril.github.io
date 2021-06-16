@@ -81,8 +81,16 @@
 <p>Simply put, if your character is in some sort of advantageous situation when attempting a task, you get Advantage. In a disadvantageous situation? Disadvantage. If you were in a combination of scenarios providing at least one advantage and one disadvantage then you just attempted normally. For a normal situation you roll your d20, then add your character’s relevant ability modifier and proficiency bonus if applicable. For Advantage, you roll your die twice, taking the higher result before adding in your modifiers. Disadvantage is the same, except you take the lower result.</p>
 <p>This simplifies and streamlines things a lot for the DM, and instead of needing to memorize a bunch of rules and their modifiers, you just need to memorize those rules. From there it’s easy to reason out if you get Advantage or Disadvantage.</p>
 <p>Of course, this has gotten many people wondering how this compares to a modifier to the roll. The answer is not so straightforward, as you’ll see that it depends upon the target result you need to succeed. First, let’s populate a tibble with Results, their Probabilities, and the Probability for beating or exceeding a result. This will include regular, Advantage, and Disadvantage.</p>
-<pre class="r"><code>library(tidyverse)
-library(ggthemes)
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
+## ✓ tibble  3.1.2     ✓ dplyr   1.0.6
+## ✓ tidyr   1.1.3     ✓ stringr 1.4.0
+## ✓ readr   1.4.0     ✓ forcats 0.5.1</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(ggthemes)
 
 
 advdisdf &lt;- expand.grid(list(1:20,1:20))
@@ -101,16 +109,13 @@ ADPMF &lt;- tibble(Result = 1:20, AdvP, ACDF, DisP, DCDF, RegP, CDF)</code></pre
   ggplot() +
   geom_line(aes(x = Result, y = ACDF), size = 2) +
   geom_line(aes(x = Result, y = DCDF), size = 2) +
-  geom_ribbon(aes(x = Result, ymin = RCDF, ymax = ACDF), fill = &quot;green4&quot;, alpha = 0.5) +
-  geom_ribbon(aes(x = Result, ymin = DCDF, ymax = RCDF), fill = &quot;red4&quot;, alpha = 0.5) +
-  geom_line(aes(x = Result, y = RCDF), size = 2) +
+  geom_ribbon(aes(x = Result, ymin = CDF, ymax = ACDF), fill = &quot;green4&quot;, alpha = 0.5) +
+  geom_ribbon(aes(x = Result, ymin = DCDF, ymax = CDF), fill = &quot;red4&quot;, alpha = 0.5) +
+  geom_line(aes(x = Result, y = CDF), size = 2) +
   xlab(&quot;d20 Target&quot;) +
   ylab(&quot;Odds of result equaling or exceeding target&quot;) +
   theme_solarized()</code></pre>
-<div class="figure">
-<img src="https://user-images.githubusercontent.com/2358/103260239-34674700-495a-11eb-9b84-f74143a80e0d.png" alt="" />
-<p class="caption">CDFDice</p>
-</div>
+<p><img src="/2020/12/28/the-effect-of-the-advantage-disadvantage-in-dungeons-and-dragons-5e-on-success-failure-and-damage/index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <p>We see here that at the extreme ends the bonus or penalty is not very large, but at 11 the bonus or penalty is much larger, exceeding ±5. Let’s quantify the bonus or penalty and visualize it.</p>
 <pre class="r"><code>ADPMF$Advantage &lt;- (ADPMF$ACDF - ADPMF$CDF)/0.05
 ADPMF$Disadvantage &lt;- (ADPMF$DCDF - ADPMF$CDF)/0.05
@@ -127,10 +132,8 @@ ADPMF %&gt;%
   scale_y_continuous(breaks = -5:5, minor_breaks = -5:5) +
   scale_x_continuous(breaks = seq(0,20, by = 5), minor_breaks = 1:20) +
   ylab(&quot;Effective bonus modifier&quot;)</code></pre>
-<div class="figure">
-<img src="https://user-images.githubusercontent.com/2358/103260250-3b8e5500-495a-11eb-9a15-4c0e0498fd73.png" alt="" />
-<p class="caption">AdvDisBonus</p>
-</div>
+<pre><code>## Warning: Ignoring unknown parameters: dodge</code></pre>
+<p><img src="/2020/12/28/the-effect-of-the-advantage-disadvantage-in-dungeons-and-dragons-5e-on-success-failure-and-damage/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Here we can see more clearly the greatest change is when the target of the roll is 11, and it gets smaller as it becomes more extreme.</p>
 <p>Now, my question was not just on Advantage, but how granting Advantage compared to bonus damage on an Attack. As it turns out, this can get pretty complex based on the varied kinds of attacks there are, their damage dice etc. So let’s look at a small set of situations.</p>
 <p>Let’s assume we have a 1st level player. Like all level 1 characters, they have a +2 proficiency bonus, and let’s assume that their ability modifier for their weapon attack and damage is +3, the highest you could have with the Standard Array. Under this situation I will look at each of the different weapon’s damage dice. This gives a total bonus to hit of +5 (+2 proficiency bonus plus their +3 ability modifier), so we’ll look at targets with AC of 7 to 24 (AC 6 and below has the same odds of hitting as an AC 7 for someone with a +5, as well as anything higher than AC 24 will be equally hard to hit as AC 24).</p>
@@ -151,8 +154,10 @@ for (i in 1:length(Target)) {
   }
 }</code></pre>
 <p>Then we can calculate the difference, and visualize it:</p>
-<pre class="r"><code>Aboost &lt;- as_tibble(AdamageResults - RdamageResults)
-colnames(Aboost) &lt;- c(&quot;1d4&quot;, &quot;1d6&quot;, &quot;1d8&quot;, &quot;1d10&quot;, &quot;1d12&quot;, &quot;2d6&quot;)
+<pre class="r"><code>Aboost &lt;- as_tibble(AdamageResults - RdamageResults)</code></pre>
+<pre><code>## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if `.name_repair` is omitted as of tibble 2.0.0.
+## Using compatibility `.name_repair`.</code></pre>
+<pre class="r"><code>colnames(Aboost) &lt;- c(&quot;1d4&quot;, &quot;1d6&quot;, &quot;1d8&quot;, &quot;1d10&quot;, &quot;1d12&quot;, &quot;2d6&quot;)
 Aboost$AC &lt;- ACRange
 Aboost %&gt;%
   gather(`1d4`, `1d6`, `1d8`, `1d10`, `1d12`, `2d6`, key = &quot;damageDice&quot;, value = &quot;bonusDamage&quot;, factor_key = T) %&gt;%
@@ -164,10 +169,7 @@ Aboost %&gt;%
                     labels = c(&quot;1d4&quot;, &quot;1d6&quot;, &quot;1d8&quot;, &quot;1d10&quot;, &quot;1d12&quot;, &quot;2d6&quot;),
                     values = c(&quot;#b58900&quot;, &quot;#dc322f&quot;, &quot;#6c71c4&quot;, &quot;#268bd2&quot;, &quot;#2aa198&quot;, &quot;#859900&quot;)) +
   theme_solarized()</code></pre>
-<div class="figure">
-<img src="https://user-images.githubusercontent.com/2358/103260255-3f21dc00-495a-11eb-9d0c-0d39fe291612.png" alt="" />
-<p class="caption">AvgDamageRound</p>
-</div>
+<p><img src="/2020/12/28/the-effect-of-the-advantage-disadvantage-in-dungeons-and-dragons-5e-on-success-failure-and-damage/index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>Something that I notice right away, is that for a given Damage Dice, the shape of the curve follows the bonus to succeed from Advantage.</p>
 <p>Now, this wasn’t exactly the question. To answer this, I need to calculate additional tables for the regular scenario, but with varying bonuses to damage. I do this from a +1 to +13 damage. I compare each of these, along with the Target AC and the Damage Dice type to find the closest amount of bonus damage to the effective increase from having Advantage.</p>
 <pre class="r"><code>AdamageResults2 &lt;- rep(list(matrix(nrow = length(Target),ncol = length(avgDieDamage))), 13)
@@ -207,10 +209,7 @@ Aboost2 %&gt;%
                     values = c(&quot;#b58900&quot;, &quot;#dc322f&quot;, &quot;#6c71c4&quot;, &quot;#268bd2&quot;, &quot;#2aa198&quot;, &quot;#859900&quot;)) +
   scale_y_continuous(breaks = seq(0,15, by = 5), minor_breaks = 0:15) +
   theme_solarized()</code></pre>
-<div class="figure">
-<img src="https://user-images.githubusercontent.com/2358/103260254-3f21dc00-495a-11eb-9654-1ec4f8a80507.png" alt="" />
-<p class="caption">DamageBonus</p>
-</div>
+<p><img src="/2020/12/28/the-effect-of-the-advantage-disadvantage-in-dungeons-and-dragons-5e-on-success-failure-and-damage/index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>Now, this initially surprised me, as it is a monotone increasing result. However, as I got to thinking about it, it made more sense to me. Initially as you go from low to mid AC targets, your bonus to hit is substantial with Advantage, so you need to keep on getting a greater damage bonus to equal the average damage per attack. However, as these numbers go higher, a greater proportion of the average damage per round with advantage comes from critical hits, which provides a significant effective damage boost.</p>
 <p>Now, looking at these graphs, a player or DM may ask how they can use them. The first three illustrate well how the Advantage mechanic influences results, both success and failure. When it comes to designing adventures, some DMs will focus on making sure the players feel like they are getting things done, that they succeed a large enough portion of their ability checks and attack rolls, adding to encounters in other ways to balance the game out. In this case, you can make your players feel even more epic by liberally granting Advantage when their target is around 11, as it makes it all the more epic to succeed. Similarly, failure through Disadvantage can help bring tension in a task of similar difficulty.</p>
 <p>As for the final graph, this is more of a look at the internals of one of the core mechanics of Fifth edition Dungeons and Dragons, and how someone might get a similar result by going a different way. Personally, I think the Advantage/Disadvantage mechanic is an elegant solution to rewarding/punishing characters for their circumstances in a fun and easy way.</p>

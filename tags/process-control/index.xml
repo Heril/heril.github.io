@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Process Control on Data Communications</title>
+    <link>/tags/process-control/</link>
+    <description>Recent content in Process Control on Data Communications</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 26 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/tags/process-control/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Multivariate Statistic Process Control method comparison Part 2: Generating   control limits and initial look </title>
+      <link>/2021/05/26/multivariate-statistic-process-control-method-comparison-part-2-generating-control-limits-and-initial-look/</link>
+      <pubDate>Wed, 26 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/2021/05/26/multivariate-statistic-process-control-method-comparison-part-2-generating-control-limits-and-initial-look/</guid>
+      <description>Earlier this year, I posted the first part of a write-up for a project I worked on during a project I worked on last year.
+As a reminder, my project involved taking 4 different types of correlation, test the baseline and 8 different data shifts, generating 1000 simulations with 100 points of data each. I then compared how three different multivariate control charts, Hotelling T^2, MEWMA, and MCUSUM, were in detecting a shift while holding the false rate fixed over all simulations.</description>
+    </item>
+    
+    <item>
+      <title>Multivariate Statistic Process Control method comparison Part 1: Simulating   correlated data and optimizing data generation.</title>
+      <link>/2021/01/04/multivariate-statistic-process-control-method-comparison-part-1-simulating-correlated-data-and-optimizing-data-generation/</link>
+      <pubDate>Mon, 04 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/2021/01/04/multivariate-statistic-process-control-method-comparison-part-1-simulating-correlated-data-and-optimizing-data-generation/</guid>
+      <description>Time to mix it up a bit from my usual game probability related simulation. This week I want to talk about a project I worked on last year in doing simulations for Statistical Process Control.
+For a brief primer, Statistical Process Control or SPC is a method used for monitoring something like a manufacturing process. It&amp;rsquo;s a form of time series analysis where you monitor results of some statistic taken from observing the process and then compare that statistic to a set of limits on a control chart to determine whether or not the distribution of that statistic has likely changed.</description>
+    </item>
+    
+  </channel>
+</rss>

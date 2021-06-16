@@ -127,7 +127,7 @@ testboost$result &lt;- as.numeric(testboost$result) - 1</code></pre>
 <pre class="r"><code>ddffit &lt;- randomForest(result ~., data = train)
 ddftest &lt;- predict(ddffit, newdata = test, type = &quot;response&quot;)
 sum(ddftest == test$result)/nrow(test)</code></pre>
-<pre><code>## [1] 0.9903846</code></pre>
+<pre><code>## [1] 0.9711538</code></pre>
 <p>This gets an accuracy in prediction of around 96%.</p>
 <p>Now, just for the sake of giving an interesting visualization, let’s use the <a href="https://github.com/araastat/reprtree">reptree</a> package by Abhijit Dasgupta. This enables us to create a visualization for the entirety of the Random Forest model made with the training set.</p>
 <pre class="r"><code>plot(ReprTree(ddffit, train, metric = &#39;d2&#39;))</code></pre>

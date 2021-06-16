@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Data Communications</title>
-    <link>/</link>
-    <description>Recent content on Data Communications</description>
+    <title>R on Data Communications</title>
+    <link>/tags/r/</link>
+    <description>Recent content in R on Data Communications</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 26 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 26 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/tags/r/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Multivariate Statistic Process Control method comparison Part 2: Generating   control limits and initial look </title>
       <link>/2021/05/26/multivariate-statistic-process-control-method-comparison-part-2-generating-control-limits-and-initial-look/</link>
@@ -15,29 +15,6 @@
       <guid>/2021/05/26/multivariate-statistic-process-control-method-comparison-part-2-generating-control-limits-and-initial-look/</guid>
       <description>Earlier this year, I posted the first part of a write-up for a project I worked on during a project I worked on last year.
 As a reminder, my project involved taking 4 different types of correlation, test the baseline and 8 different data shifts, generating 1000 simulations with 100 points of data each. I then compared how three different multivariate control charts, Hotelling T^2, MEWMA, and MCUSUM, were in detecting a shift while holding the false rate fixed over all simulations.</description>
-    </item>
-    
-    <item>
-      <title>Odds of winning constant probability games against one person</title>
-      <link>/2021/04/23/odds-of-winning-constant-probability-games-against-one-person/</link>
-      <pubDate>Fri, 23 Apr 2021 00:00:00 +0000</pubDate>
-      
-      <guid>/2021/04/23/odds-of-winning-constant-probability-games-against-one-person/</guid>
-      <description>Probabilities and games.
-Two simple games used to illustrate certain features of calculating probabilities are as follows:
-You and a friend take turns flipping a fair coin. The first person to flip heads wins. If you go first, what are your chances of winning?
-You and a friend take turns rolling a fair die with 6 sides. The first person to roll a 6 wins. If you go first, what are your chances of winning.</description>
-    </item>
-    
-    <item>
-      <title>Using Python and Random Forest to predict Diabetes Risk.</title>
-      <link>/2021/01/08/using-python-and-random-forest-to-predict-diabetes-risk/</link>
-      <pubDate>Fri, 08 Jan 2021 00:00:00 +0000</pubDate>
-      
-      <guid>/2021/01/08/using-python-and-random-forest-to-predict-diabetes-risk/</guid>
-      <description>Two weeks ago I wrote a post, Using R and Random Forest to predict Diabetes Risk. Since I am less experienced with using python in machine learning models, and this was a data set that worked out so nicely, I figured I would take an attempt at it.
-First we need to load all the modules and functions we need to use.
-import pandas as pd from matplotlib import pyplot as plt import numpy as np import seaborn as sns from sklearn.</description>
     </item>
     
     <item>
@@ -77,45 +54,6 @@ I was looking through the UCI Machine Learning Repository for a couple of data s
       
       <guid>/2020/12/21/the-likelihood-of-getting-or-beating-an-array-of-stats-in-d-d-part-2/</guid>
       <description>So, after sharing my post from last week about probabilities and stat arrays. Now, the way I determine which array is better is clearly overly arbitrary. Under that system the standard array is better than an array of (7, 18, 18, 18, 18, 18), when in reality any player looking for maximal stats would take that over the standard array (8, 10, 12, 13, 14, 15). So maybe there is a different way to compare these.</description>
-    </item>
-    
-    <item>
-      <title>The likelihood of getting or beating an array of stats in D&amp;D</title>
-      <link>/2020/12/15/the-likelihood-of-getting-or-beating-an-array-of-stats-in-d-d/</link>
-      <pubDate>Tue, 15 Dec 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/2020/12/15/the-likelihood-of-getting-or-beating-an-array-of-stats-in-d-d/</guid>
-      <description>I got involved in another conversation about Dungeons and Dragons and probabilities again. This time I saw something that I’ve seen come up in a variety of circumstances. So, let’s take this scenario.
-A Dungeon Master is running a game where the players roll for their stats, and one player has suspiciously high results. The question of course is, did the player cheat with their stats, either by rolling a different way, or did they just pick the stats they wanted.</description>
-    </item>
-    
-    <item>
-      <title>Probabilities of Winning in the game Among Us</title>
-      <link>/2020/12/07/probabilities-of-winning-in-the-game-among-us/</link>
-      <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/2020/12/07/probabilities-of-winning-in-the-game-among-us/</guid>
-      <description>Back in August of this year, the game Among Us leapt in popularity. A social game where crewmates try to complete tasks while staying alive. At the same time, impostors try to kill off the innocent players while also sabotaging the crew. It’s a fun, interactive twist on in person social games such as Werewolf or Mafia.
-With the interactive gameplay, rounds end when a player reports a dead body or call an emergency meeting and the remaining players get a chance to discus and potentially vote out one player.</description>
-    </item>
-    
-    <item>
-      <title>Simulating die rolls and testing fairness using a Chi-squared test.</title>
-      <link>/2020/11/24/simulating-die-rolls-and-testing-fairness-using-a-chi-squared-test./</link>
-      <pubDate>Tue, 24 Nov 2020 21:13:14 -0500</pubDate>
-      
-      <guid>/2020/11/24/simulating-die-rolls-and-testing-fairness-using-a-chi-squared-test./</guid>
-      <description>As someone who enjoys playing Dungeons and Dragons, I also get fascinated by the primitive random number generators used it them, the dice. When I talk dice with friends and internet strangers, the conversation sometimes leans towards discussing whether or not their dice are fair.
-Now if you search for how to test this, you can find a few good answers to explain the various statistical tests that can be used, along with their pros and their cons, so I’m not going to do that here.</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>/about/</link>
-      <pubDate>Thu, 05 May 2016 21:48:51 -0700</pubDate>
-      
-      <guid>/about/</guid>
-      <description>Data Scientist and Statistician curious about data around me. I like to run computer simulations and create machine learning models to better understand the world around me and help others make informed decisions based on data.</description>
     </item>
     
   </channel>

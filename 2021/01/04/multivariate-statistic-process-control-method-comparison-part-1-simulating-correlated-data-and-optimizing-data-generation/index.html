@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.83.1" />
+
+
+<title>Multivariate Statistic Process Control method comparison Part 1: Simulating   correlated data and optimizing data generation. - Data Communications</title>
+<meta property="og:title" content="Multivariate Statistic Process Control method comparison Part 1: Simulating   correlated data and optimizing data generation. - Data Communications">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/heril">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/heril">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">6 min read</span>
+    
+
+    <h1 class="article-title">Multivariate Statistic Process Control method comparison Part 1: Simulating   correlated data and optimizing data generation.</h1>
+
+    
+    <span class="article-date">2021-01-04</span>
+    
+
+    <div class="article-content">
+      <p>Time to mix it up a bit from my usual game probability related simulation. This week I want to talk about a project I worked on last year in doing simulations for Statistical Process Control.</p>
+<p>For a brief primer, <a href="https://en.wikipedia.org/wiki/Statistical_process_control">Statistical Process Control</a> or SPC is a method used for monitoring something like a manufacturing process. It&rsquo;s a form of time series analysis where you monitor results of some statistic taken from observing the process and then compare that statistic to a set of limits on a control chart to determine whether or not the distribution of that statistic has likely changed. Ideally, by the time you see a data point is off you can investigate it and fix it before you actually harm product.</p>
+<p>I was initially introduced to the idea of SPC with my internship and proceeded to discuss with a professor about conducting a project on the subject. The project was looking at what type of control chart or statistic did the best job for different kinds of dependent data. In the case of SPC, a better job is for a fixed sensitivity in falsely detecting a change, how quickly can you detect a change of differing magnitudes.</p>
+<p>To carry out this in a simulation required generating quite a bit of data and then calculating the appropriate control chart statistics from this data. I was going to do four different dependence structures with 4 different correlation strengths each and for each of these I was going to do a baseline simulation and 8 different mean shifts of the data, for a total of 144 different sets of simulations. For each of these I as going to do 1000 simulations of 1000 pairs of data each, with control chart statistics calculated for 3 different control charts, Hotelling T^2, MEWMA, and MCUSUM.</p>
+<p>To generate the dependent pairs of data, I leveraged the copula package from R and used the MSQC package to calculate the statistics. When I started running this I found that with how much data I was trying to produce and crunch that this was going to take nearly 24 hours of compute time. So, I decided to bring in some help by using the R parallellization packages foreach, doMC and doRNG, as well as rewrote the functions of the MSQC package to cut out the plotting unnecessary plotting to speed things up.</p>
+<p>In the end I got something a lot more concise and readable, but also could compute within 3 hours, which given that I was using 4 cores meant more time savings than just from using more of my CPU.</p>
+<p>You can see the code on my CopulaControl repository, or in summary below. Here for brevity I just use MSQC, but at github I have my modified functions from MSQC instead.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">library</span>(copula)
+<span style="color:#a6e22e">library</span>(MSQC)
+<span style="color:#a6e22e">library</span>(tidyverse)
+<span style="color:#a6e22e">library</span>(Hmisc)
+<span style="color:#a6e22e">library</span>(foreach)
+<span style="color:#a6e22e">library</span>(doMC)
+<span style="color:#a6e22e">library</span>(doRNG)
+
+copulaMvdGen <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">function</span>(myCopula, shift <span style="color:#f92672">=</span> <span style="color:#a6e22e">c</span>(<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>)) {
+  <span style="color:#a6e22e">return</span>(<span style="color:#a6e22e">mvdc</span>(copula <span style="color:#f92672">=</span> myCopula, margins <span style="color:#f92672">=</span> <span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;norm&#34;</span>, <span style="color:#e6db74">&#34;norm&#34;</span>), paramMargins <span style="color:#f92672">=</span> <span style="color:#a6e22e">list</span>(<span style="color:#a6e22e">list</span>(mean <span style="color:#f92672">=</span> shift[1], sd <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>), <span style="color:#a6e22e">list</span>(mean <span style="color:#f92672">=</span> shift[2], sd <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>))))
+}
+
+mvdGen <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">function </span>(category <span style="color:#f92672">=</span> normalCopula, rho <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.6</span>, shiftList <span style="color:#f92672">=</span> <span style="color:#a6e22e">c</span>(<span style="color:#ae81ff">0.5</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>)) {
+  myCopula <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">category</span>(<span style="color:#a6e22e">iRho</span>(<span style="color:#a6e22e">category</span>(), rho))
+  myMvd <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">list</span>()
+  myMvd[[1]] <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">copulaMvdGen</span>(myCopula)
+  <span style="color:#a6e22e">for</span>(i in <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span><span style="color:#a6e22e">length</span>(shiftList)) {
+    myMvd[[1 <span style="color:#f92672">+</span> i]] <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">copulaMvdGen</span>(myCopula, <span style="color:#a6e22e">c</span>(<span style="color:#ae81ff">0</span>,shiftList[i]))
+    myMvd[[1 <span style="color:#f92672">+</span> i <span style="color:#f92672">+</span> <span style="color:#a6e22e">length</span>(shiftList)]] <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">copulaMvdGen</span>(myCopula, <span style="color:#a6e22e">rep</span>(shiftList[i], <span style="color:#ae81ff">2</span>))
+  }
+  <span style="color:#a6e22e">return</span>(myMvd)
+}
+
+
+<span style="color:#75715e"># Set number of workers, i.e. number of threads to give to R.</span>
+<span style="color:#75715e"># Number of Iterations in generator.R is split up by this.</span>
+<span style="color:#a6e22e">registerDoMC</span>(<span style="color:#ae81ff">4</span>)
+seed <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">registerDoRNG</span>(<span style="color:#ae81ff">20200218</span>)
+
+<span style="color:#75715e"># Test parameters.</span>
+<span style="color:#75715e"># copulaList: Bivariate Copula functions to use to generate simulation data</span>
+<span style="color:#75715e">#   Change not supported in run.R, need to change in mvdGen() call in generator.R</span>
+<span style="color:#75715e"># rhoList: Different correlations to be forced in the bivariate copulas</span>
+<span style="color:#75715e">#   Any value in interval (-1,1) is allowed.</span>
+<span style="color:#75715e"># shiftList: List of shift in means of the bivariate data. Listed is for single</span>
+<span style="color:#75715e">#   and double variable shifts. Change is not supported in run.R, need to change</span>
+<span style="color:#75715e">#   mvdGen() call in generator.R to change.</span>
+<span style="color:#75715e"># size: Number of pairs of points to generate for each iteration of each experiment.</span>
+<span style="color:#75715e"># iterations: Number of repitions for each experiment.</span>
+<span style="color:#75715e"># cARL: ARL to calibrate UCL for analysis</span>
+copulaList <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;Normal&#34;</span>, <span style="color:#e6db74">&#34;Frank&#34;</span>, <span style="color:#e6db74">&#34;Clayton&#34;</span>, <span style="color:#e6db74">&#34;Gumbel&#34;</span>)
+rhoList <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">c</span>(<span style="color:#ae81ff">0.6</span>, <span style="color:#ae81ff">0.2</span>, <span style="color:#ae81ff">-0.2</span>, <span style="color:#ae81ff">-0.6</span>)
+shiftList <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;0/0&#34;</span>, <span style="color:#e6db74">&#34;0/0.5&#34;</span>, <span style="color:#e6db74">&#34;0/1&#34;</span>, <span style="color:#e6db74">&#34;0/2&#34;</span>, <span style="color:#e6db74">&#34;0/3&#34;</span>, <span style="color:#e6db74">&#34;0.5/0.5&#34;</span>, <span style="color:#e6db74">&#34;1/1&#34;</span>, <span style="color:#e6db74">&#34;2/2&#34;</span>, <span style="color:#e6db74">&#34;3/3&#34;</span>)
+size <span style="color:#f92672">&lt;-</span> <span style="color:#ae81ff">1000</span>
+iterations <span style="color:#f92672">&lt;-</span> <span style="color:#ae81ff">1000</span>
+cARL <span style="color:#f92672">&lt;-</span> <span style="color:#ae81ff">300</span>
+
+Nrho <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">length</span>(rhoList)
+Ncopula <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">length</span>(copulaList)
+Nshift <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">length</span>(shiftList)
+</code></pre></div><p>I was then able to generate my data using a nested for loop. If I were rewriting this less than six months from when I last touched this, I would use something like expand.grid to make a list of my experiments and then iterate the master experiment list instead of so many loops.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">simData <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">vector</span>(<span style="color:#e6db74">&#34;list&#34;</span>, Nrho)
+<span style="color:#a6e22e">for</span>(i in <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span>Nrho) {
+  myMvd <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">list</span>(<span style="color:#a6e22e">mvdGen</span>(normalCopula, rho <span style="color:#f92672">=</span> rhoList[i]),
+                <span style="color:#a6e22e">mvdGen</span>(frankCopula, rho <span style="color:#f92672">=</span> rhoList[i]),
+                <span style="color:#a6e22e">mvdGen</span>(claytonCopula, rho <span style="color:#f92672">=</span> rhoList[i]),
+                <span style="color:#a6e22e">mvdGen</span>(gumbelCopula, rho <span style="color:#f92672">=</span> rhoList[i]))
+  simData[[i]] <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">vector</span>(<span style="color:#e6db74">&#34;list&#34;</span>, Ncopula)
+  <span style="color:#a6e22e">for</span>(j in <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span>Ncopula) {
+    simData[[i]][[j]] <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">foreach</span>(k<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="color:#f92672">:</span>iterations, .packages<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;copula&#34;</span>) <span style="color:#f92672">%dorng%</span> {
+      tmpData <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">vector</span>(<span style="color:#e6db74">&#34;list&#34;</span>, Nshift)
+      <span style="color:#a6e22e">for</span>(l in <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span>Nshift) {
+        tmpVar <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">as.data.frame</span>(<span style="color:#a6e22e">rMvdc</span>(size, myMvd[[j]][[l]]))
+        <span style="color:#a6e22e">if </span>(l <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>) {
+          t2chart <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">mult.chart</span>(tmpVar, type <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;t2&#34;</span>)
+          mechart <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">mult.chart</span>(tmpVar, type <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;mewma&#34;</span>)
+          mcchart <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">mult.chart</span>(tmpVar, type <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;mcusum&#34;</span>)
+          t2data <span style="color:#f92672">&lt;-</span> t2chart<span style="color:#f92672">$</span>t2
+          medata <span style="color:#f92672">&lt;-</span> mechart<span style="color:#f92672">$</span>t2
+          mcdata <span style="color:#f92672">&lt;-</span> mcchart<span style="color:#f92672">$</span>t2
+        } else {
+          t2data <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">mult.chart</span>(tmpVar, type <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;t2&#34;</span>, Xmv <span style="color:#f92672">=</span> t2chart<span style="color:#f92672">$</span>Xmv, S <span style="color:#f92672">=</span> t2chart<span style="color:#f92672">$</span>covariance)<span style="color:#f92672">$</span>t2
+          medata <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">mult.chart</span>(tmpVar, type <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;mewma&#34;</span>, Xmv <span style="color:#f92672">=</span> mechart<span style="color:#f92672">$</span>Xmv, S <span style="color:#f92672">=</span> mechart<span style="color:#f92672">$</span>covariance)<span style="color:#f92672">$</span>t2
+          mcdata <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">mult.chart</span>(tmpVar, type <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;mcusum&#34;</span>, Xmv <span style="color:#f92672">=</span> mcchart<span style="color:#f92672">$</span>Xmv, S <span style="color:#f92672">=</span> mcchart<span style="color:#f92672">$</span>covariance)<span style="color:#f92672">$</span>t2
+        }
+        tmpData[[l]] <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">cbind</span>(<span style="color:#a6e22e">rep</span>(copulaList[[j]]),
+                            <span style="color:#a6e22e">rep</span>(rhoList[[i]]),
+                            <span style="color:#a6e22e">rep</span>(shiftList[[l]]),
+                            <span style="color:#a6e22e">rep</span>(k, size),
+                            tmpVar,
+                            <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span>size,
+                            t2data,
+                            medata,
+                            mcdata
+        )
+        <span style="color:#a6e22e">colnames</span>(tmpData[[l]]) <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;copula&#34;</span>, <span style="color:#e6db74">&#34;rho&#34;</span>, <span style="color:#e6db74">&#34;shift&#34;</span>, <span style="color:#e6db74">&#34;iteration&#34;</span>, <span style="color:#e6db74">&#34;data1&#34;</span>, <span style="color:#e6db74">&#34;data2&#34;</span>, <span style="color:#e6db74">&#34;N&#34;</span>, <span style="color:#e6db74">&#34;t2&#34;</span>, <span style="color:#e6db74">&#34;mewma&#34;</span>, <span style="color:#e6db74">&#34;mcusum&#34;</span>)
+      }
+      tmpData
+    }
+  }
+}
+<span style="color:#a6e22e">gc</span>()
+
+tmpData <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">vector</span>(<span style="color:#e6db74">&#34;list&#34;</span>, Nrho)
+<span style="color:#a6e22e">for</span>(i in <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span>Nrho) {
+  tmpData[[i]] <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">vector</span>(<span style="color:#e6db74">&#34;list&#34;</span>, Ncopula)
+  <span style="color:#a6e22e">for</span>(j in <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span>Ncopula) {
+    tmpData[[i]][[j]] <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">bind_rows</span>(simData[[i]][[j]])
+  }
+}
+<span style="color:#a6e22e">rm</span>(simData)
+<span style="color:#a6e22e">gc</span>()
+
+simData <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">bind_rows</span>(tmpData)
+<span style="color:#a6e22e">rm</span>(tmpData)
+<span style="color:#a6e22e">gc</span>()
+
+simData<span style="color:#f92672">$</span>copula <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">factor</span>(simData<span style="color:#f92672">$</span>copula, level <span style="color:#f92672">=</span> copulaList)
+simData<span style="color:#f92672">$</span>rho <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">factor</span>(simData<span style="color:#f92672">$</span>rho, level <span style="color:#f92672">=</span> rhoList)
+simData<span style="color:#f92672">$</span>shift <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">factor</span>(simData<span style="color:#f92672">$</span>shift, level <span style="color:#f92672">=</span> shiftList)
+</code></pre></div><p>Even with the loops, it becomes much easier to follow than my earlier iterations, where here I loop over the correlations, the copulas, the 1000 iterations, the shifts and generate the data for each of these before bringing it all together.</p>
+<p>I will look at this again to talk in further detail about how I proceeded to generate the visualizations and came to my conclusions from this simulation in part 2. For now I&rsquo;ll just leave one of the plots I made for this.</p>
+<p><img src="https://user-images.githubusercontent.com/2358/103607322-dac0c880-4ed5-11eb-9b1c-b8dfe94ed048.png" alt="tposhighnew"></p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

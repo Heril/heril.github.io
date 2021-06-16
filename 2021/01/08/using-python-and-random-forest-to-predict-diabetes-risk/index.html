@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.83.1" />
+
+
+<title>Using Python and Random Forest to predict Diabetes Risk. - Data Communications</title>
+<meta property="og:title" content="Using Python and Random Forest to predict Diabetes Risk. - Data Communications">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/heril">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/heril">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">3 min read</span>
+    
+
+    <h1 class="article-title">Using Python and Random Forest to predict Diabetes Risk.</h1>
+
+    
+    <span class="article-date">2021-01-08</span>
+    
+
+    <div class="article-content">
+      <p>Two weeks ago I wrote a post, <a href="https://spencer-r-hall.medium.com/using-r-and-random-forest-to-predict-diabetes-risk-e5ce945f076a">Using R and Random Forest to predict Diabetes Risk</a>. Since I am less experienced with using python in machine learning models, and this was a data set that worked out so nicely, I figured I would take an attempt at it.</p>
+<p>First we need to load all the modules and functions we need to use.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> pandas <span style="color:#f92672">as</span> pd
+<span style="color:#f92672">from</span> matplotlib <span style="color:#f92672">import</span> pyplot <span style="color:#66d9ef">as</span> plt
+<span style="color:#f92672">import</span> numpy <span style="color:#f92672">as</span> np
+<span style="color:#f92672">import</span> seaborn <span style="color:#f92672">as</span> sns 
+<span style="color:#f92672">from</span> sklearn.model_selection <span style="color:#f92672">import</span> train_test_split
+<span style="color:#f92672">from</span> sklearn.ensemble <span style="color:#f92672">import</span> RandomForestClassifier
+<span style="color:#f92672">from</span> sklearn <span style="color:#f92672">import</span> metrics
+</code></pre></div><p>The next thing is just like was done in R, load the data, clean it up a bit for using scikit-learn to create a classification model, and then split our factors from our classification variable.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">diabetesdf <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>read_csv(<span style="color:#e6db74">&#34;https://archive.ics.uci.edu/ml/machine-learning-databases/00529/diabetes_data_upload.csv&#34;</span>)
+gender_state <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#39;Male&#39;</span>: <span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#39;Female&#39;</span>: <span style="color:#ae81ff">0</span>}
+yes_no_map <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#39;Yes&#39;</span>: <span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#39;No&#39;</span>: <span style="color:#ae81ff">0</span>}
+diabetesdf[<span style="color:#e6db74">&#39;Gender&#39;</span>] <span style="color:#f92672">=</span> diabetesdf[<span style="color:#e6db74">&#39;Gender&#39;</span>]<span style="color:#f92672">.</span>map(gender_state)
+<span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">16</span>):
+ diabetesdf<span style="color:#f92672">.</span>iloc[:,i] <span style="color:#f92672">=</span> diabetesdf<span style="color:#f92672">.</span>iloc[:,i]<span style="color:#f92672">.</span>map(yes_no_map)
+Y <span style="color:#f92672">=</span> diabetesdf[<span style="color:#e6db74">&#39;class&#39;</span>]<span style="color:#f92672">.</span>values
+X <span style="color:#f92672">=</span> diabetesdf<span style="color:#f92672">.</span>drop(labels <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;class&#39;</span>], axis <span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</code></pre></div><p>As we did in R, we need to do a train/test split. In this case, I will set it to be the same split as what I did in R, so that we can compare the accuracy.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">X_train, X_test, Y_train, Y_test <span style="color:#f92672">=</span> train_test_split(X, Y, test_size<span style="color:#f92672">=</span><span style="color:#ae81ff">0.2</span>, random_state <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>)
+</code></pre></div><p>Finally, it&rsquo;s time to make the model and quantify the accuracy. I will set <code>n_estimators = 500</code>, as that matches the default <code>ntrees</code> of <code>randomForest</code> in R.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">model <span style="color:#f92672">=</span> RandomForestClassifier(n_estimators <span style="color:#f92672">=</span> <span style="color:#ae81ff">500</span>, random_state <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>)
+model<span style="color:#f92672">.</span>fit(X_train, Y_train)
+prediction_test <span style="color:#f92672">=</span> model<span style="color:#f92672">.</span>predict(X_test)
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#34;Accuracy = &#34;</span>, metrics<span style="color:#f92672">.</span>accuracy_score(Y_test, prediction_test))
+</code></pre></div><p>Accuracy = 0.9807692307692307
+We see here an accuracy of 98.1%. This is a bit better than what we got doing R (97.1%), but not very much different. In fact, when I run the model in R repeatedly I frequently get results of 96.1%, 97.1% and 98.1%, or given the train/test split, this means between 100–102 of the 104 in the test set are accurately predicted. So it looks like we are getting comparable accuracy.</p>
+<p>Now, last time I visualized an overall tree, representing the total random forest. This time, let&rsquo;s do a different sort of visualization. I took a function I found on <a href="https://www.analyseup.com/learn-python-for-data-science/python-random-forest-feature-importance-plot.html">analyseup</a> on how to make a bar plot to show a bar plot of how important the features are in order.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">feature_importance <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>array(model<span style="color:#f92672">.</span>feature_importances_)
+feature_names <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>array(X<span style="color:#f92672">.</span>columns)
+<span style="color:#75715e">#Create a DataFrame using a Dictionary</span>
+data<span style="color:#f92672">=</span>{<span style="color:#e6db74">&#39;feature_names&#39;</span>:feature_names,<span style="color:#e6db74">&#39;feature_importance&#39;</span>:feature_importance}
+fi_df <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>DataFrame(data)
+<span style="color:#75715e">#Sort the DataFrame in order decreasing feature importance</span>
+fi_df<span style="color:#f92672">.</span>sort_values(by<span style="color:#f92672">=</span>[<span style="color:#e6db74">&#39;feature_importance&#39;</span>], ascending<span style="color:#f92672">=</span>False,inplace<span style="color:#f92672">=</span>True)
+<span style="color:#75715e">#Define size of bar plot</span>
+plt<span style="color:#f92672">.</span>figure(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">10</span>,<span style="color:#ae81ff">8</span>))
+<span style="color:#75715e">#Plot Searborn bar chart</span>
+sns<span style="color:#f92672">.</span>barplot(x<span style="color:#f92672">=</span>fi_df[<span style="color:#e6db74">&#39;feature_importance&#39;</span>], y<span style="color:#f92672">=</span>fi_df[<span style="color:#e6db74">&#39;feature_names&#39;</span>])
+plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#39;RANDOM FOREST &#39;</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;FEATURE IMPORTANCE&#39;</span>)
+plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#39;FEATURE IMPORTANCE&#39;</span>)
+plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#39;FEATURE NAMES&#39;</span>)
+</code></pre></div><p><img src="https://user-images.githubusercontent.com/2358/104083723-2b019880-51fe-11eb-8ba2-c29055a9986f.png" alt="output_9_1"></p>
+<p>Looking at this, it appears Polyuria (excess urination), Polydipsia (excess thirst or drinking), Age, and Gender are the most important features in predicting Diabetes risk, with other features following afterwards.</p>
+<p>This was a fun exercise for me, and I look forward to leveraging python more in my future posts and personal machine learning work.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+
+    
+  </body>
+</html>
+

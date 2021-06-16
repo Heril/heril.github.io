@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.83.1" />
+
+
+<title>The likelihood of getting or beating an array of stats in D&amp;D Part 2 - Data Communications</title>
+<meta property="og:title" content="The likelihood of getting or beating an array of stats in D&amp;D Part 2 - Data Communications">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/heril">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/heril">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">6 min read</span>
+    
+
+    <h1 class="article-title">The likelihood of getting or beating an array of stats in D&amp;D Part 2</h1>
+
+    
+    <span class="article-date">2020-12-21</span>
+    
+
+    <div class="article-content">
+      
+<script src="/2020/12/21/the-likelihood-of-getting-or-beating-an-array-of-stats-in-d-d-part-2/index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>So, after sharing my post from last week about probabilities and stat arrays. Now, the way I determine which array is better is clearly overly arbitrary. Under that system the standard array is better than an array of (7, 18, 18, 18, 18, 18), when in reality any player looking for maximal stats would take that over the standard array (8, 10, 12, 13, 14, 15). So maybe there is a different way to compare these.</p>
+<p>Now the first approach would be to just take the ability modifier. Each integer from 3-18 maps to an integer from -4 to +4 that is used for almost everything in the game (except for carrying capacity, which uses the actual Strength score).</p>
+<p>Now this is great, however I want to be thorough. While in terms of in-game actions, a 10 is no different from an 11, having a higher score makes it easier to bump up the Ability Modifier later when a character gets leveled. So let’s use a modified scale. For the purpose of this, lets use a <a href="https://www.dandwiki.com/wiki/Character_Stat_Probabilities_(3.5e_Other)">scale I found for 3.5E Dungeons and Dragons</a> that I found while writing last week.</p>
+<p>So, we’ll skip the simulation this week, and let’s start by generating our data table along with the sum of ability modifiers for each array:</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
+## ✓ tibble  3.1.2     ✓ dplyr   1.0.6
+## ✓ tidyr   1.1.3     ✓ stringr 1.4.0
+## ✓ readr   1.4.0     ✓ forcats 0.5.1</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>statCombinations &lt;- vector(mode = &quot;list&quot;, length = 54264)
+statPermutations &lt;- vector(mode = &quot;logical&quot;, length = 54264)
+statOdds &lt;- vector(mode = &quot;logical&quot;, length = 54264)
+sumModifier &lt;- vector(mode = &quot;logical&quot;, length = 54264)
+sumModifier_human &lt;- vector(mode = &quot;logical&quot;, length = 54264)
+
+maxPermutations &lt;- factorial(6)
+
+statRoll &lt;- expand.grid(rep(list(1:6), 4))
+statRoll &lt;- apply(statRoll,1,sort)
+dicepdf &lt;- summary(as.factor(colSums(statRoll[2:4,])))/(6^4)
+
+rolledStats &lt;- c(15, 17, 16, 15, 17, 15)
+rolledStats &lt;- sort(rolledStats)
+
+modifierVal &lt;- function(a) {
+  modifiers &lt;- as.list(floor((c(3:19) - 10)/2))
+  names(modifiers) &lt;- c(3:19)
+  modifier &lt;- 0
+  for (i in a) {
+    modifier &lt;- modifier + as.numeric(modifiers[as.character(i)])
+  }
+  return(modifier)
+}
+
+diceodds &lt;- function(a) {
+  probability &lt;- 1
+  for (i in a) {
+    probability &lt;- probability * as.numeric(dicepdf[as.character(i)])
+  }
+  return(probability)
+}
+
+pct_sum &lt;- function(..., na.rm = FALSE) {
+  sum(..., na.rm = na.rm) * 100
+}
+
+counter &lt;- 0
+for (i1 in 3:18) {
+  pos1 &lt;- i1
+  for (i2 in i1:18) {
+    pos2 &lt;- i2
+    for (i3 in i2:18) {
+      pos3 &lt;- i3
+      for (i4 in i3:18) {
+        pos4 &lt;- i4
+        for (i5 in i4:18) {
+          pos5 &lt;- i5
+          for (i6 in i5:18) {
+            pos6 &lt;- i6
+            counter &lt;- counter + 1
+            statCombinations[[counter]] &lt;- c(pos1, pos2, pos3, pos4, pos5, pos6)
+            sumModifier[counter] &lt;- modifierVal(statCombinations[[counter]])
+            sumModifier_human[counter] &lt;- modifierVal(statCombinations[[counter]] + 1)
+            statOdds[counter] &lt;- diceodds(statCombinations[[counter]])
+            statPermutations[counter] &lt;- maxPermutations  / prod(factorial(summary(as.factor(statCombinations[[counter]]))))
+          }
+        }
+      }
+    }
+  }
+}
+
+finaldf &lt;- as_tibble(cbind(matrix(unlist(statCombinations), ncol = 6, byrow = T), statOdds, statPermutations, sumModifier, sumModifier_human)) %&gt;%
+  mutate(probability = statOdds * statPermutations)</code></pre>
+<pre><code>## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if `.name_repair` is omitted as of tibble 2.0.0.
+## Using compatibility `.name_repair`.</code></pre>
+<p>So, taking our hypothesized array of (15, 17, 16, 15, 17, 15), let’s compare the odds we got last week with this new method. First, the old method:</p>
+<pre class="r"><code>finaldf %&gt;%
+  filter(V1 &gt;= rolledStats[1] &amp; V2 &gt;= rolledStats[2] &amp; V3 &gt;= rolledStats[3] &amp; V4 &gt;= rolledStats[4] &amp; V5 &gt;= rolledStats[5] &amp; V6 &gt;= rolledStats[6]) %&gt;%
+  summarize_at(vars(probability),
+               list(total_percent = pct_sum))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   total_percent
+##           &lt;dbl&gt;
+## 1       0.00665</code></pre>
+<p>This is 0.0066%, like we had last week. Now lets do the new way when comparing the sum total of ability modifiers:</p>
+<pre class="r"><code>finaldf %&gt;%
+  filter(sumModifier &gt;= modifierVal(rolledStats)) %&gt;%
+  summarize_at(vars(probability),
+               list(total_percent = pct_sum))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   total_percent
+##           &lt;dbl&gt;
+## 1         0.268</code></pre>
+<p>This time we get 0.2684%. This is a lot higher than the previous way, over 40 times in fact. However, even with that, it’s still less than a 1% chance, so I still would say it’s likely to be a cheating player (though that conclusion is not so strong as the old method).</p>
+<p>One thing this new method allows, is a lot mor intuition on what arrays are “better” than others, as well as to plot the distribution of these stat arrays. Lets plot this distribution.</p>
+<pre class="r"><code>modifierdist &lt;- finaldf %&gt;%
+  group_by(sumModifier) %&gt;%
+  summarize_at(vars(probability), list(total_percent = pct_sum))
+
+modifierdist %&gt;%
+  ggplot(aes(x = sumModifier, y = total_percent)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  ggtitle(&quot;Distribution of Stat Blocks Before Racial Modifiers&quot;) +
+  ylab(&quot;% frequency&quot;) +
+  xlab(&quot;Sum of Ability Modifiers&quot;)</code></pre>
+<p><img src="/2020/12/21/the-likelihood-of-getting-or-beating-an-array-of-stats-in-d-d-part-2/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>The next thing we can do is we can actually calculate summary statistics using the definitions of median, mode, mean and standard deviation for discrete distributions like this. So let’s do it.</p>
+<pre class="r"><code>#median
+modifierdist$sumModifier[50 &lt;= cumsum(modifierdist$total_percent)][1]</code></pre>
+<pre><code>## [1] 5</code></pre>
+<pre class="r"><code>#mode
+modifierdist$sumModifier[which.max(modifierdist$total_percent)]</code></pre>
+<pre><code>## [1] 5</code></pre>
+<pre class="r"><code>#mean
+sum(modifierdist$sumModifier * modifierdist$total_percent/100)</code></pre>
+<pre><code>## [1] 5.240741</code></pre>
+<pre class="r"><code>#standard deviation
+sqrt(sum((modifierdist$sumModifier)^2 * modifierdist$total_percent/100) - (sum(modifierdist$sumModifier * modifierdist$total_percent/100))^2)</code></pre>
+<pre><code>## [1] 3.544196</code></pre>
+<p>This gives a median and mode of +5, a mean of +5.2407, and a standard deviation of 3.5442.</p>
+<p>Now, these stats are only at the beginning of character creation. Based on the options chosen, at least two of your ability scores will increase, but doing this for all combinations is not so much practical. However, the most vanilla option is the Human option, which gives a +1 to each of your Ability Scores. So let’s take a look at that, plot the distribution and recalculate the summary statistics.</p>
+<pre class="r"><code>finaldf_human &lt;- finaldf %&gt;%
+  mutate(V1 = V1 + 1, V2 = V2 + 1, V3 = V3 + 1, V4 = V4 + 1, V5 = V5 + 1, V6 = V6 + 1)
+
+modifierdist_human &lt;- finaldf_human %&gt;%
+  group_by(sumModifier_human) %&gt;%
+  summarize_at(vars(probability), list(total_percent = pct_sum))
+
+modifierdist_human %&gt;%
+  ggplot(aes(x = sumModifier_human, y = total_percent)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  ggtitle(&quot;Distribution of Stat Blocks of Human Characters&quot;) +
+  ylab(&quot;% frequency&quot;) +
+  xlab(&quot;Sum of Ability Modifiers&quot;)</code></pre>
+<p><img src="/2020/12/21/the-likelihood-of-getting-or-beating-an-array-of-stats-in-d-d-part-2/index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>#median
+modifierdist_human$sumModifier_human[50 &lt;= cumsum(modifierdist_human$total_percent)][1]</code></pre>
+<pre><code>## [1] 8</code></pre>
+<pre class="r"><code>#mode
+modifierdist_human$sumModifier_human[which.max(modifierdist_human$total_percent)]</code></pre>
+<pre><code>## [1] 8</code></pre>
+<pre class="r"><code>#mean
+sum(modifierdist_human$sumModifier_human * modifierdist_human$total_percent/100)</code></pre>
+<pre><code>## [1] 8.226852</code></pre>
+<pre class="r"><code>#standard deviation
+sqrt(sum((modifierdist_human$sumModifier_human)^2 * modifierdist_human$total_percent/100) - (sum(modifierdist_human$sumModifier_human * modifierdist_human$total_percent/100))^2)</code></pre>
+<pre><code>## [1] 3.535849</code></pre>
+<p>The median and mode are increased by 3 to +8. The mean also goes up around 3 to +8.2269, with the standard deviation being about the same at 3.5358</p>
+<p>For completeness, let’s make one final graph with the base stats and the human option next to each other.</p>
+<pre class="r"><code>tmp1 &lt;- finaldf %&gt;%
+  group_by(sumModifier_human) %&gt;%
+  summarize_at(vars(probability), list(total_percent = pct_sum))
+
+tmp2 &lt;- finaldf %&gt;%
+  group_by(sumModifier) %&gt;%
+  summarize_at(vars(probability), list(total_percent = pct_sum))
+
+tmp3 &lt;- rbind(tibble(sumModifier_human = rep(0,6), total_percent = rep(0,6)), tmp1)
+
+comparedf &lt;- tibble(sumModifier = tmp2$sumModifier, basePercent = tmp2$total_percent, humanPercent = tmp3$total_percent) %&gt;%
+  gather(`basePercent`, `humanPercent`, key = &quot;type&quot;, value = &quot;percent&quot;)
+
+comparedf %&gt;%
+  ggplot() +
+  geom_bar(aes(x = sumModifier, y = percent, fill = type), alpha = 0.9, width = 1, stat = &quot;identity&quot;, position = position_dodge(width = 1)) +
+  ggtitle(&quot;Distribution of Stat Blocks Before Racial Modifiers vs. Base Human&quot;) +
+  ylab(&quot;% frequency&quot;) +
+  xlab(&quot;Sum of Ability Modifiers&quot;) +
+  xlim(-10, 22) +
+  scale_fill_manual(name = &quot;Scenario&quot;,labels = c(&quot;Base Stats&quot;, &quot;Human Modifiers&quot;), values = c(&quot;dodgerblue4&quot;, &quot;firebrick4&quot;))</code></pre>
+<pre><code>## Warning: Removed 34 rows containing missing values (geom_bar).</code></pre>
+<p><img src="/2020/12/21/the-likelihood-of-getting-or-beating-an-array-of-stats-in-d-d-part-2/index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>We see that there’s about a +3 shift to the right, though if you look carefully it isn’t a simple shift of 3. For a simple example, the minimum value of the sum for base stats is -24, where for the Human option shifts that all the way to -18.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

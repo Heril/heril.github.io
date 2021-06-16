@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.83.1" />
+
+
+<title>Using R and Random Forest to predict Diabetes Risk - Data Communications</title>
+<meta property="og:title" content="Using R and Random Forest to predict Diabetes Risk - Data Communications">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/heril">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/heril">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">3 min read</span>
+    
+
+    <h1 class="article-title">Using R and Random Forest to predict Diabetes Risk</h1>
+
+    
+    <span class="article-date">2020-12-24</span>
+    
+
+    <div class="article-content">
+      
+<script src="/2020/12/24/using-r-and-random-forest-to-predict-diabetes-risk/index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>Time for something a bit different from my previous posts, but hopefully more common in the future.</p>
+<p>I was looking through the UCI Machine Learning Repository for a couple of data sets I could use for some simple machine learning problems to try interesting problems and keep my abilities sharp. This week I found the <a href="https://archive.ics.uci.edu/ml/datasets/Early+stage+diabetes+risk+prediction+dataset.">Early Stage Diabetes Risk Prediction</a>. This comes from a paper on <a href="https://doi.org/10.1007/978-981-13-8798-2_12">early prediction of diabetes risk</a>. The abstract goes over the methods used, indicating Random Forest as doing particularly well. Since I don’t have access to the actual paper, I wanted to try out using R to try this model out.</p>
+<p>It turns out, that this data isn’t terribly interesting when using Random Forest. Not much cleaning up or tuning is needed to get good accuracy. For the sake of completeness though, I’ll share my snippets and results.</p>
+<p>First, we need to load the appropriate libraries and the data set. Here I load the columns except for age as factors, as well as clean up the column names.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
+## ✓ tibble  3.1.2     ✓ dplyr   1.0.6
+## ✓ tidyr   1.1.3     ✓ stringr 1.4.0
+## ✓ readr   1.4.0     ✓ forcats 0.5.1</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(randomForest)</code></pre>
+<pre><code>## randomForest 4.6-14</code></pre>
+<pre><code>## Type rfNews() to see new features/changes/bug fixes.</code></pre>
+<pre><code>## 
+## Attaching package: &#39;randomForest&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     combine</code></pre>
+<pre><code>## The following object is masked from &#39;package:ggplot2&#39;:
+## 
+##     margin</code></pre>
+<pre class="r"><code>library(reprtree)</code></pre>
+<pre><code>## Loading required package: tree</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;tree&#39;:
+##   method     from
+##   print.tree cli</code></pre>
+<pre><code>## Loading required package: plotrix</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;reprtree&#39;:
+##   method    from
+##   text.tree tree</code></pre>
+<pre class="r"><code>diabetesdf &lt;- read_csv(&quot;https://archive.ics.uci.edu/ml/machine-learning-databases/00529/diabetes_data_upload.csv&quot;,
+                col_types = &quot;dffffffffffffffff&quot;)
+colnames(diabetesdf) &lt;- make.names(colnames(diabetesdf))
+names(diabetesdf)[names(diabetesdf) == &#39;class&#39;] &lt;- &quot;result&quot;</code></pre>
+<p>Now, so we can test our out of sample error rate, let’s split 80% of the data for training our model and then test it with the remaining 20%</p>
+<pre class="r"><code>sample_size = round(nrow(diabetesdf)*.80)
+index &lt;- sample(seq_len(nrow(diabetesdf)), size = sample_size)
+
+train &lt;- diabetesdf[index, ]
+test &lt;- diabetesdf[-index, ]
+trainboost &lt;- train
+testboost &lt;- test
+trainboost$result &lt;- as.numeric(trainboost$result) - 1
+testboost$result &lt;- as.numeric(testboost$result) - 1</code></pre>
+<p>Now, lets train our Random Forest model using the default parameters and calculate the accuracy.</p>
+<pre class="r"><code>ddffit &lt;- randomForest(result ~., data = train)
+ddftest &lt;- predict(ddffit, newdata = test, type = &quot;response&quot;)
+sum(ddftest == test$result)/nrow(test)</code></pre>
+<pre><code>## [1] 0.9903846</code></pre>
+<p>This gets an accuracy in prediction of around 96%.</p>
+<p>Now, just for the sake of giving an interesting visualization, let’s use the <a href="https://github.com/araastat/reprtree">reptree</a> package by Abhijit Dasgupta. This enables us to create a visualization for the entirety of the Random Forest model made with the training set.</p>
+<pre class="r"><code>plot(ReprTree(ddffit, train, metric = &#39;d2&#39;))</code></pre>
+<pre><code>## [1] &quot;Constructing distance matrix...&quot;
+## [1] &quot;Finding representative trees...&quot;</code></pre>
+<p><img src="/2020/12/24/using-r-and-random-forest-to-predict-diabetes-risk/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>So, while this isn’t a particularly challenging data set for Random Forest to classify, it does provide an illustration on the basics of creating a model using Random Forest, as well as to try out reptree to make a visualization for the overall decision tree.</p>
+<p>Since I know this data set works well and have more experience with implementing Machine Learning algorithms in R, I will come back to this to transfer more of my skill over to Python.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

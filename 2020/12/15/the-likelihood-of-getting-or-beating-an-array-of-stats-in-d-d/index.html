@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.83.1" />
+
+
+<title>The likelihood of getting or beating an array of stats in D&amp;D - Data Communications</title>
+<meta property="og:title" content="The likelihood of getting or beating an array of stats in D&amp;D - Data Communications">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/heril">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/heril">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">5 min read</span>
+    
+
+    <h1 class="article-title">The likelihood of getting or beating an array of stats in D&amp;D</h1>
+
+    
+    <span class="article-date">2020-12-15</span>
+    
+
+    <div class="article-content">
+      
+<script src="/2020/12/15/the-likelihood-of-getting-or-beating-an-array-of-stats-in-d-d/index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>I got involved in another conversation about Dungeons and Dragons and probabilities again. This time I saw something that I’ve seen come up in a variety of circumstances. So, let’s take this scenario.</p>
+<p>A Dungeon Master is running a game where the players roll for their stats, and one player has suspiciously high results. The question of course is, did the player cheat with their stats, either by rolling a different way, or did they just pick the stats they wanted. Given D&amp;D is a cooperative game, this can be especially frustrating to the other players at the table, as this one player has a character that is well above average for doing just about everything.</p>
+<p>First, lets talk about the standard way for generating stats for a character. In D&amp;D 5th edition, the default way is actually just to take a standard array of values. 8, 10, 12, 13, 14, 15. The nice thing about this is that it gets rid of inequality from good or bad luck of a player. The downside for many, is that it’s just too predictable. They like the chance of having a character with some really high stats and low stats as well. The standard way of rolling for stats is called 4d6, drop lowest. What that means is for each of the six stats, you roll 4 six-sided dice, discard the single lowest die, and then sum the remaining 3 dice. This gives a range of numbers from 3 to 18 that is skewed in a way to make the players have results that are a bit higher than average in that range compared to just rolling 3 dice.</p>
+<p>With all my previous posts I’ve done simulations, so lets start off with that. Lets take an unbelievably high set of stats: 15, 17, 16, 15, 17, 15 and then simulate creating a million characters and count what proportion meet or exceed this array of stats. In R this is pretty straight forward:</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
+## ✓ tibble  3.1.2     ✓ dplyr   1.0.6
+## ✓ tidyr   1.1.3     ✓ stringr 1.4.0
+## ✓ readr   1.4.0     ✓ forcats 0.5.1</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>rolledStats &lt;- c(15, 17, 16, 15, 17, 15)
+rolledStats &lt;- sort(rolledStats)
+die_sides &lt;- 1:6
+N &lt;- 1000000
+results &lt;- vector(mode = &quot;list&quot;, length = N)
+count &lt;- 0
+for (j in 1:N) {
+  results[[j]] &lt;- vector(mode = &quot;logical&quot;, length = 6)
+  for (k in 1:6) {
+    results[[j]][k] &lt;- sum(sort(sample(die_sides, 4, replace = T), decreasing = TRUE)[1:3])
+  }
+  results[[j]] &lt;- sort(results[[j]])
+}
+countExceeding &lt;- as_tibble(matrix(unlist(results), ncol = 6, byrow = T)) %&gt;%
+  filter(V1 &gt;= rolledStats[1] &amp; V2 &gt;= rolledStats[2] &amp; V3 &gt;= rolledStats[3] &amp; V4 &gt;= rolledStats[4] &amp; V5 &gt;= rolledStats[5] &amp; V6 &gt;= rolledStats[6]) %&gt;%
+  count()</code></pre>
+<pre><code>## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if `.name_repair` is omitted as of tibble 2.0.0.
+## Using compatibility `.name_repair`.</code></pre>
+<pre class="r"><code>paste(countExceeding[[1]]/N*100, &quot;%&quot;, sep = &quot;&quot;)</code></pre>
+<pre><code>## [1] &quot;0.0067%&quot;</code></pre>
+<p>When running this I got 0.0097%, which I must say, is pretty unlikely.</p>
+<p>But what if we could do better and calculate this from first principles. For each roll of 4d6, drop lowest there are only <span class="math inline">\(6^4 = 1296\)</span> outcomes, so counting the probability of each value from 3 to 18 should be easy enough. We can use these probabilities to calculate the odds of each 54,264 unique arrays of stats we can get by calculating the odds of one of the permutations of those arrays as well as the number of permutations of that arrays. We can then filter through the resulting table to find all the arrays that are as good or better than the array we are testing against. It may sound like a lot of computation, but by being smart about the approach I get it run in under 5 seconds from start to finish.</p>
+<pre class="r"><code>counter &lt;- 0
+statCombinations &lt;- vector(mode = &quot;list&quot;, length = 54264)
+statPermutations &lt;- vector(mode = &quot;logical&quot;, length = 54264)
+statOdds &lt;- vector(mode = &quot;logical&quot;, length = 54264)
+maxPermutations &lt;- factorial(6)
+
+diceodds &lt;- function(a) {
+  statRoll &lt;- expand.grid(rep(list(1:6), 4))
+  statRoll &lt;- apply(statRoll,1,sort)
+  dicepdf &lt;- summary(as.factor(colSums(statRoll[2:4,])))/(6^4)
+  probability &lt;- 1
+  for (i in a) {
+    probability &lt;- probability * as.numeric(dicepdf[as.character(i)])
+  }
+  return(probability)
+}
+
+pct_sum &lt;- function(..., na.rm = FALSE) {
+  sum(..., na.rm = na.rm) * 100
+}
+
+for (i1 in 3:18) {
+  pos1 &lt;- i1
+  for (i2 in i1:18) {
+    pos2 &lt;- i2
+    for (i3 in i2:18) {
+      pos3 &lt;- i3
+      for (i4 in i3:18) {
+        pos4 &lt;- i4
+        for (i5 in i4:18) {
+          pos5 &lt;- i5
+          for (i6 in i5:18) {
+            pos6 &lt;- i6
+            counter &lt;- counter + 1
+            statCombinations[[counter]] &lt;- c(pos1, pos2, pos3, pos4, pos5, pos6)
+            statOdds[counter] &lt;- diceodds(statCombinations[[counter]])
+            statPermutations[counter] &lt;- maxPermutations  / prod(factorial(summary(as.factor(statCombinations[[counter]]))))
+          }
+        }
+      }
+    }
+  }
+}
+prob &lt;- as_tibble(cbind(matrix(unlist(statCombinations), ncol = 6, byrow = T), statOdds, statPermutations)) %&gt;%
+  mutate(probability = statOdds * statPermutations) %&gt;%
+  filter(V1 &gt;= rolledStats[1] &amp; V2 &gt;= rolledStats[2] &amp; V3 &gt;= rolledStats[3] &amp; V4 &gt;= rolledStats[4] &amp; V5 &gt;= rolledStats[5] &amp; V6 &gt;= rolledStats[6]) %&gt;%
+  summarize_at(vars(probability),
+               list(total_percent = pct_sum))
+paste(prob[[1]], &quot;%&quot;, sep = &quot;&quot;)</code></pre>
+<pre><code>## [1] &quot;0.00664599433876074%&quot;</code></pre>
+<p>Calculating from first principles gives us a probability of 0.0066%, a little bit lower than the result of my simulation, but in neighborhood.</p>
+<p>I made a <a href="https://heril.shinyapps.io/StatArrayOdds/">Shiny App</a> so you can put in any given array in to see it’s probability. The default is the standard array, and when the odds of beating each stat in the standard array come out to be around 32%, it doesn’t look so bad.</p>
+<p>Of course, if you run across this situation in a game, there is still that uncertainty of did they really cheat. Given the social nature of D&amp;D you could offend the player by accusing them of something they didn’t actually do. Or, even though they cheated, it might have to do with their own insecurities in wanting to not fail or wanting to be an epic hero. No matter the case, what tends to be the most well received advice in the conversations I’ve seen about this is to without mentioning cheating, talk to the player about the effect on the enjoyment of their fellow players along with the suggestion of them roll their stats again.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

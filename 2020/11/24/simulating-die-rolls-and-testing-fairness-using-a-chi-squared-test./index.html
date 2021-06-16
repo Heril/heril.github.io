@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.83.1" />
+
+
+<title>Simulating die rolls and testing fairness using a Chi-squared test. - Data Communications</title>
+<meta property="og:title" content="Simulating die rolls and testing fairness using a Chi-squared test. - Data Communications">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/heril">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/heril">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">3 min read</span>
+    
+
+    <h1 class="article-title">Simulating die rolls and testing fairness using a Chi-squared test.</h1>
+
+    
+    <span class="article-date">2020-11-24</span>
+    
+
+    <div class="article-content">
+      
+<script src="/2020/11/24/simulating-die-rolls-and-testing-fairness-using-a-chi-squared-test./index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>As someone who enjoys playing Dungeons and Dragons, I also get fascinated by the primitive random number generators used it them, the dice. When I talk dice with friends and internet strangers, the conversation sometimes leans towards discussing whether or not their dice are fair.</p>
+<p>Now if you search for how to test this, you can find a <a href="https://timothyweber.org/node/255">few good answers to explain the various statistical tests that can be used</a>, along with their pros and their cons, so I’m not going to do that here.</p>
+<p>While probabilities of several dice together can get messy really quickly without having to pull out a reference for my courses in Probability, one quick and dirty way we have of checking the odds of results is using simulations, and doing large simulations of die rolls is pretty quick on modern machines.</p>
+<p>So, for this first simulation I wanted to take a d20, a 20-sided die and simulate the results of a chi-squared test with a decent sample size, enough to expect each result 200 times, plot a histogram of the results, and plot a cumulative bar chart showing the odds of getting at least a certain result. Then we can attempt to quantify the fairness by doing a chi-squared test.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
+## ✓ tibble  3.1.2     ✓ dplyr   1.0.6
+## ✓ tidyr   1.1.3     ✓ stringr 1.4.0
+## ✓ readr   1.4.0     ✓ forcats 0.5.1</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>theme_set(theme_bw())
+set.seed(1)
+n &lt;- 4000
+d &lt;- 20
+
+dfair &lt;- tibble(result = sample(x = seq.int(from = 1, to = d), size = n, replace = TRUE))
+dcountsfair &lt;- dfair %&gt;% group_by(result) %&gt;% count()
+dcountsfair$cum &lt;- rev(cumsum(rev(dcountsfair$n)))
+        
+dfair %&gt;%
+  ggplot(aes(x = result)) +
+  geom_histogram(binwidth = 1, col = &quot;black&quot;) +
+  geom_hline(yintercept=n/d, linetype=&quot;dashed&quot;, color = &quot;red&quot;)</code></pre>
+<p><img src="/2020/11/24/simulating-die-rolls-and-testing-fairness-using-a-chi-squared-test./index_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<pre class="r"><code>dcountsfair %&gt;%
+            ggplot(aes(x = result)) +
+            geom_bar(aes(y = cum), stat = &quot;identity&quot;,
+                           col = &quot;black&quot;) +
+            xlab(&quot;result&quot;) +
+            ylab(&quot;Count equals or exceeds result&quot;)</code></pre>
+<p><img src="/2020/11/24/simulating-die-rolls-and-testing-fairness-using-a-chi-squared-test./index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>chisq.test(table(dfair), p = rep(1/d, d))</code></pre>
+<pre><code>## 
+##  Chi-squared test for given probabilities
+## 
+## data:  table(dfair)
+## X-squared = 14.2, df = 19, p-value = 0.7719</code></pre>
+<p>Now, let’s do the same thing with a simulated die that the highest result is 10% more likely and the lowest result is 10% less likely.</p>
+<pre class="r"><code>set.seed(1)
+dweighted &lt;- tibble(result = sample(x = seq.int(from = 1, to = d), size = n, replace = TRUE, prob = c(0.9, rep(1, d - 2), 1.1)))
+dcountsweighted &lt;- dweighted %&gt;% group_by(result) %&gt;% count()
+dcountsweighted$cum &lt;- rev(cumsum(rev(dcountsweighted$n)))
+
+dweighted %&gt;%
+  ggplot(aes(x = result)) +
+  geom_histogram(binwidth = 1, col = &quot;black&quot;) +
+  geom_hline(yintercept=n/d, linetype=&quot;dashed&quot;, color = &quot;red&quot;)</code></pre>
+<p><img src="/2020/11/24/simulating-die-rolls-and-testing-fairness-using-a-chi-squared-test./index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>dcountsweighted %&gt;%
+            ggplot(aes(x = result)) +
+            geom_bar(aes(y = cum), stat = &quot;identity&quot;,
+                           col = &quot;black&quot;) +
+            xlab(&quot;result&quot;) +
+            ylab(&quot;Count equals or exceeds result&quot;)</code></pre>
+<p><img src="/2020/11/24/simulating-die-rolls-and-testing-fairness-using-a-chi-squared-test./index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>chisq.test(table(dweighted), p = rep(1/d, d))</code></pre>
+<pre><code>## 
+##  Chi-squared test for given probabilities
+## 
+## data:  table(dweighted)
+## X-squared = 32.12, df = 19, p-value = 0.0303</code></pre>
+<p>To the casual observer, the histogram and cumulative bar plots don’t really look <em>that</em> different from each other. Sure, the number of 20’s are higher in the weighted simulation, but it was also higher in the fair simulation. But here we see the results of the Chi-squared test reveal things are quite a bit different in these results.</p>
+<p>Of course detecting this deviation is a function of how severe the problem is versus the sample size.</p>
+<p>Next time I’ll be looking at a different test with the same simulation, the Kolmogorov-Smirnov test.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

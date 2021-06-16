@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.83.1" />
+
+
+<title>Odds of winning constant probability games against one person - Data Communications</title>
+<meta property="og:title" content="Odds of winning constant probability games against one person - Data Communications">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/heril">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/heril">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">3 min read</span>
+    
+
+    <h1 class="article-title">Odds of winning constant probability games against one person</h1>
+
+    
+    <span class="article-date">2021-04-23</span>
+    
+
+    <div class="article-content">
+      <p>Probabilities and games.</p>
+<p>Two simple games used to illustrate certain features of calculating probabilities are as follows:</p>
+<p>You and a friend take turns flipping a fair coin. The first person to flip heads wins. If you go first, what are your chances of winning?</p>
+<p>You and a friend take turns rolling a fair die with 6 sides. The first person to roll a 6 wins. If you go first, what are your chances of winning.</p>
+<p>These end up being very similar problems, and can be generalized.</p>
+<p>For convenience, I&rsquo;ll talk about the rolling a die version. To start we&rsquo;ll walk through a couple winning scenarios to look for a pattern.</p>
+<p>The simplest way to win when you go first is for you roll a 6 on your first turn. On a fair die, this is simply 1/6.</p>
+<p>If you don&rsquo;t win on your first turn, what&rsquo;s the next simplest way to win? Your first roll to not be a 6, your partner&rsquo;s first roll to also not be a 6, and then your second roll to be a 6. The odds of each of these independent events is respectively 5/6, 5/6, and 1/6. The odds of this happening in sequence is the product of these,</p>
+<p><img src="https://user-images.githubusercontent.com/2358/115920921-b27eba80-a42f-11eb-89b4-4d08672b5811.png" alt="eqn7"></p>
+<p>It might be clear at this point, but every scenario where when you go first that you win, you end with rolling a 6 (1/6 odds) and you and your opponent having an equal number of turns that no one rolled a 6 (5/6 each for both you and your partner), where this can happen anywhere from 0 or more times.</p>
+<p>What then are the odds that you win when you go first on your second turn or sooner? Simply the sum of your odds of winning on the first turn, and the odds of winning on your second turn.</p>
+<p><img src="https://user-images.githubusercontent.com/2358/115920924-b3175100-a42f-11eb-9c48-3f4889fc9fec.png" alt="eqn6"></p>
+<p>So to find out your absolute odds of winning when you go first you just need to keep on adding up these winning scenarios. Using infinite sums you can calculate this</p>
+<p><img src="https://user-images.githubusercontent.com/2358/115920927-b3175100-a42f-11eb-8654-a925e4f82b65.png" alt="eqn5"></p>
+<p>Where n is the number of turns you take.</p>
+<p>For those familiar with infinite sums of geometric series, this can be more conveniently written as</p>
+<p><img src="https://user-images.githubusercontent.com/2358/115920928-b3afe780-a42f-11eb-9210-0cadabebd9cb.png" alt="eqn4"></p>
+<p>(Because 5/6 squared is 25/36)</p>
+<p>This fits the form of the common form of when 0&lt;r&lt;1</p>
+<p><img src="https://user-images.githubusercontent.com/2358/115920930-b3afe780-a42f-11eb-9261-e8618f561ada.png" alt="eqn3"></p>
+<p>So the odds of this is</p>
+<p><img src="https://user-images.githubusercontent.com/2358/115920932-b4487e00-a42f-11eb-8676-549b1ee383c4.png" alt="eqn2"></p>
+<p>Given the common form above, this can be generalized for every probability game of the same nature such as flipping coins or other games where you and a partner take turns and the odds of the current player winning is constant.</p>
+<p>If the odds of winning during any of your turns is p, where 0&lt;p&lt;1, then the odds of winning at some point is</p>
+<p><img src="https://user-images.githubusercontent.com/2358/115920934-b4e11480-a42f-11eb-8ecb-88be43ad538d.png" alt="eqn1"></p>
+<p>Simplifying this gives</p>
+<p><img src="https://user-images.githubusercontent.com/2358/115920936-b4e11480-a42f-11eb-8211-bee34ad77b8d.png" alt="eqn"></p>
+<p>Taking a look at any possible value for p between 0 and 1, we can see that in going first you always have at least a 50% chance of winning, with those odds increasing as p approaches 1.</p>
+<p><img src="https://user-images.githubusercontent.com/2358/115922029-32f1eb00-a431-11eb-92a6-5b8e234fb7bf.png" alt="graph"></p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+
+    
+  </body>
+</html>
+

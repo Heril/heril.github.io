@@ -1,134 +1,185 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
 <meta name="generator" content="Hugo 0.83.1" />
 
 
+<link href='https://heril.github.io/favicon.ico' rel='icon' type='image/x-icon'/>
+<meta name="theme-color" content="#ffffff" />
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
 <title>Multivariate Statistic Process Control method comparison Part 2: Generating   control limits and initial look  - Data Communications</title>
-<meta property="og:title" content="Multivariate Statistic Process Control method comparison Part 2: Generating   control limits and initial look  - Data Communications">
 
 
-  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+<meta name="author" content="Spencer R Hall" />
+
+
+<meta name="description" content="A blog on Data Science and Statistics." />
+
+
+<meta name="keywords" content="R, SPC, Process Control, Simulation, Trend Analysis" />
+
+
+<meta property="og:title" content="Multivariate Statistic Process Control method comparison Part 2: Generating   control limits and initial look " />
+<meta name="twitter:title" content="Multivariate Statistic Process Control method comparison Part 2: Generating   control limits and initial look " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://heril.github.io/2021/05/26/multivariate-statistic-process-control-method-comparison-part-2-generating-control-limits-and-initial-look/" /><meta property="og:description" content="Earlier this year, I posted the first part of a write-up for a project I worked on during a project I worked on last year.
+As a reminder, my project involved taking 4 different types of correlation, test the baseline and 8 different data shifts, generating 1000 simulations with 100 points of data each. I then compared how three different multivariate control charts, Hotelling T^2, MEWMA, and MCUSUM, were in detecting a shift while holding the false rate fixed over all simulations.
+For this I use the pretty standard for in control average run length (ARL) of 300. This means, on average when the process is in control, you can expect to see an out of control data point in any 300 sequential points." />
+<meta name="twitter:description" content="Earlier this year, I posted the first part of a write-up for a project I worked on during a project I worked on last year.
+As a reminder, my project involved taking 4 different types of correlation, test the baseline and 8 different data shifts, generating 1000 simulations with 100 points of data each. I then compared how three different multivariate control charts, Hotelling T^2, MEWMA, and MCUSUM, were in detecting a shift while holding the false rate fixed over all simulations.
+For this I use the pretty standard for in control average run length (ARL) of 300. This means, on average when the process is in control, you can expect to see an out of control data point in any 300 sequential points." /><meta property="og:image" content="https://heril.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://heril.github.io/img/og.png" /><meta property="article:published_time" content="2021-05-26T00:00:00+00:00" /><meta property="article:modified_time" content="2021-05-26T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
 
 
 
+
+<link rel="stylesheet" href="https://heril.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="auto"
+  data-theme-auto='true'
+  >
+    <script data-cfasync="false">
   
-
-
-
-
-
-
-
-
-<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
-
-
-
-<link rel="stylesheet" href="/css/fonts.css" media="all">
-<link rel="stylesheet" href="/css/main.css" media="all">
-
-
-
-  </head>
-  <body>
-    <div class="wrapper">
-      <header class="header">
-        <nav class="nav">
-  <a href="/" class="nav-logo">
-    <img src="/images/logo.png"
-         width="50"
-         height="50"
-         alt="Logo">
-  </a>
-
-  <ul class="nav-links">
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
     
-    <li><a href="/about/">About</a></li>
-    
-    <li><a href="https://github.com/heril">GitHub</a></li>
-    
-    <li><a href="https://twitter.com/heril">Twitter</a></li>
-    
-  </ul>
-</nav>
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
 
-      </header>
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://heril.github.io">Data Communications</a>
+            
+            <span class="title-sub">A blog on Data Science and Statistics.</span>
+            
+        </div>
+    </div>
+</header>
 
-
-<main class="content" role="main">
-
-  <article class="article">
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
     
-    <span class="article-duration">5 min read</span>
-    
+    <h2 class="post-item post-title">
+        <a href="https://heril.github.io/2021/05/26/multivariate-statistic-process-control-method-comparison-part-2-generating-control-limits-and-initial-look/">Multivariate Statistic Process Control method comparison Part 2: Generating   control limits and initial look </a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-05-26</span>
 
-    <h1 class="article-title">Multivariate Statistic Process Control method comparison Part 2: Generating   control limits and initial look </h1>
 
-    
-    <span class="article-date">2021-05-26</span>
-    
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;5 minutes</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/r">R</a>&nbsp;<a href="/tags/spc">SPC</a>&nbsp;<a href="/tags/process-control">Process Control</a>&nbsp;<a href="/tags/simulation">Simulation</a>&nbsp;<a href="/tags/trend-analysis">Trend Analysis</a>&nbsp;</span>
 
-    <div class="article-content">
-      <p>Earlier this year, I posted the first part of a write-up for a project I worked on during a project I worked on last year.</p>
+    </div>
+    
+    <div class="post-content markdown-body">
+        <p>Earlier this year, I posted the first part of a write-up for a project I worked on during a project I worked on last year.</p>
 <p>As a reminder, my project involved taking 4 different types of correlation, test the baseline and 8 different data shifts, generating 1000 simulations with 100 points of data each. I then compared how three different multivariate control charts, Hotelling T^2, MEWMA, and MCUSUM, were in detecting a shift while holding the false rate fixed over all simulations.</p>
 <p>For this I use the pretty standard for in control average run length (ARL) of 300. This means, on average when the process is in control, you can expect to see an out of control data point in any 300 sequential points. The simple way to do this is to calculate the control limits for each control chart using the in-control data so that this constraint is kept. For this code, the variable <code>cARL</code> is set to 300 to represent constraining the ARL to be 300 in this case.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">t2ucl <span style="color:#f92672">&lt;-</span> simData <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">filter</span>(shift <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;0/0&#34;</span>) <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">group_by</span>(copula, rho) <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">summarize</span>(UCLt2 <span style="color:#f92672">=</span> <span style="color:#a6e22e">quantile</span>(t2, probs <span style="color:#f92672">=</span> (cARL <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>)<span style="color:#f92672">/</span>cARL)) <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">select</span>(copula, rho, UCLt2) <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">spread</span>(rho, UCLt2)<span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">column_to_rownames</span>(var<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;copula&#34;</span>)
+<pre><code class="language-r">t2ucl &lt;- simData %&gt;%
+  filter(shift == &quot;0/0&quot;) %&gt;%
+  group_by(copula, rho) %&gt;%
+  summarize(UCLt2 = quantile(t2, probs = (cARL - 1)/cARL)) %&gt;%
+  select(copula, rho, UCLt2) %&gt;%
+  spread(rho, UCLt2)%&gt;%
+  column_to_rownames(var=&quot;copula&quot;)
 
-mewmaucl <span style="color:#f92672">&lt;-</span> simData <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">filter</span>(shift <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;0/0&#34;</span>) <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">group_by</span>(copula, rho) <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">summarize</span>(UCLme <span style="color:#f92672">=</span> <span style="color:#a6e22e">quantile</span>(mewma, probs <span style="color:#f92672">=</span> (cARL <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>)<span style="color:#f92672">/</span>cARL)) <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">select</span>(copula, rho, UCLme) <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">spread</span>(rho, UCLme)<span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">column_to_rownames</span>(var<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;copula&#34;</span>)
+mewmaucl &lt;- simData %&gt;%
+  filter(shift == &quot;0/0&quot;) %&gt;%
+  group_by(copula, rho) %&gt;%
+  summarize(UCLme = quantile(mewma, probs = (cARL - 1)/cARL)) %&gt;%
+  select(copula, rho, UCLme) %&gt;%
+  spread(rho, UCLme)%&gt;%
+  column_to_rownames(var=&quot;copula&quot;)
 
-mcusumucl <span style="color:#f92672">&lt;-</span> simData <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">filter</span>(shift <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;0/0&#34;</span>) <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">group_by</span>(copula, rho) <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">summarize</span>(UCLmc <span style="color:#f92672">=</span> <span style="color:#a6e22e">quantile</span>(mcusum, probs <span style="color:#f92672">=</span> (cARL <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>)<span style="color:#f92672">/</span>cARL)) <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">select</span>(copula, rho, UCLmc) <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">spread</span>(rho, UCLmc)<span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">column_to_rownames</span>(var<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;copula&#34;</span>)
-</code></pre></div><p>From these control limits, we can test the out of control data, and determine the ARL, where the lower the value, the quicker a shift is detected. For ease of use, if a run has zero points out of control, I will treat that as an ARL equal to the size of the run, in each of these cases that being 1000.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">tmpData <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">list</span>()
-index <span style="color:#f92672">&lt;-</span> <span style="color:#ae81ff">1</span>
-<span style="color:#a6e22e">for</span>(i in <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span>Ncopula) {
-  <span style="color:#a6e22e">for</span>(j in <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span>Nrho) {
-    tmpData[[index]] <span style="color:#f92672">&lt;-</span> splitData[[index]] <span style="color:#f92672">%&gt;%</span>
-      <span style="color:#a6e22e">group_by</span>(copula, rho, shift, iteration) <span style="color:#f92672">%&gt;%</span>
-      <span style="color:#a6e22e">summarize</span>(t2ARL <span style="color:#f92672">=</span> <span style="color:#a6e22e">ifelse</span>(shift <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;0/0&#34;</span>, size<span style="color:#f92672">/</span><span style="color:#a6e22e">sum</span>(t2 <span style="color:#f92672">&gt;</span> t2ucl[i,j]),
-                              <span style="color:#a6e22e">detect_index</span>(t2, <span style="color:#a6e22e">function</span>(z)(z<span style="color:#f92672">&gt;</span>t2ucl[i,j]))),
-                meARL <span style="color:#f92672">=</span> <span style="color:#a6e22e">ifelse</span>(shift <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;0/0&#34;</span>, size<span style="color:#f92672">/</span><span style="color:#a6e22e">sum</span>(mewma <span style="color:#f92672">&gt;</span> mewmaucl[i,j]),
-                              <span style="color:#a6e22e">detect_index</span>(mewma, <span style="color:#a6e22e">function</span>(z)(z<span style="color:#f92672">&gt;</span>mewmaucl[i,j]))),
-                mcARL <span style="color:#f92672">=</span> <span style="color:#a6e22e">ifelse</span>(shift <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;0/0&#34;</span>, size<span style="color:#f92672">/</span><span style="color:#a6e22e">sum</span>(mcusum <span style="color:#f92672">&gt;</span> mcusumucl[i,j]),
-                              <span style="color:#a6e22e">detect_index</span>(mcusum, <span style="color:#a6e22e">function</span>(z)(z<span style="color:#f92672">&gt;</span>mcusumucl[i,j])))) <span style="color:#f92672">%&gt;%</span>
-      <span style="color:#a6e22e">mutate</span>(t2ARL <span style="color:#f92672">=</span> <span style="color:#a6e22e">ifelse</span>(<span style="color:#a6e22e">is.infinite</span>(t2ARL), size, t2ARL),
-             meARL <span style="color:#f92672">=</span> <span style="color:#a6e22e">ifelse</span>(<span style="color:#a6e22e">is.infinite</span>(meARL), size, meARL),
-             mcARL <span style="color:#f92672">=</span> <span style="color:#a6e22e">ifelse</span>(<span style="color:#a6e22e">is.infinite</span>(mcARL), size, mcARL))
-    index <span style="color:#f92672">&lt;-</span> index <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+mcusumucl &lt;- simData %&gt;%
+  filter(shift == &quot;0/0&quot;) %&gt;%
+  group_by(copula, rho) %&gt;%
+  summarize(UCLmc = quantile(mcusum, probs = (cARL - 1)/cARL)) %&gt;%
+  select(copula, rho, UCLmc) %&gt;%
+  spread(rho, UCLmc)%&gt;%
+  column_to_rownames(var=&quot;copula&quot;)
+</code></pre>
+<p>From these control limits, we can test the out of control data, and determine the ARL, where the lower the value, the quicker a shift is detected. For ease of use, if a run has zero points out of control, I will treat that as an ARL equal to the size of the run, in each of these cases that being 1000.</p>
+<pre><code class="language-r">tmpData &lt;- list()
+index &lt;- 1
+for(i in 1:Ncopula) {
+  for(j in 1:Nrho) {
+    tmpData[[index]] &lt;- splitData[[index]] %&gt;%
+      group_by(copula, rho, shift, iteration) %&gt;%
+      summarize(t2ARL = ifelse(shift == &quot;0/0&quot;, size/sum(t2 &gt; t2ucl[i,j]),
+                              detect_index(t2, function(z)(z&gt;t2ucl[i,j]))),
+                meARL = ifelse(shift == &quot;0/0&quot;, size/sum(mewma &gt; mewmaucl[i,j]),
+                              detect_index(mewma, function(z)(z&gt;mewmaucl[i,j]))),
+                mcARL = ifelse(shift == &quot;0/0&quot;, size/sum(mcusum &gt; mcusumucl[i,j]),
+                              detect_index(mcusum, function(z)(z&gt;mcusumucl[i,j])))) %&gt;%
+      mutate(t2ARL = ifelse(is.infinite(t2ARL), size, t2ARL),
+             meARL = ifelse(is.infinite(meARL), size, meARL),
+             mcARL = ifelse(is.infinite(mcARL), size, mcARL))
+    index &lt;- index + 1
   }
 }
-<span style="color:#a6e22e">rm</span>(splitData)
-</code></pre></div><p>All that remains is to get those ARL values in a way that is easy to visualize, as well as generate confidence intervals for the simulation as a whole.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">ARL <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">bind_rows</span>(tmpData) <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">group_by</span>(copula, rho, shift) <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">summarize</span>(t2ci <span style="color:#f92672">=</span> <span style="color:#a6e22e">list</span>(<span style="color:#a6e22e">mean_cl_normal</span>(t2ARL) <span style="color:#f92672">%&gt;%</span>
-                          <span style="color:#a6e22e">rename</span>(t2ARLmean<span style="color:#f92672">=</span>y, t2ARLlwr<span style="color:#f92672">=</span>ymin, t2ARLupr<span style="color:#f92672">=</span>ymax)),
-            meci <span style="color:#f92672">=</span> <span style="color:#a6e22e">list</span>(<span style="color:#a6e22e">mean_cl_normal</span>(meARL) <span style="color:#f92672">%&gt;%</span>
-                          <span style="color:#a6e22e">rename</span>(meARLmean<span style="color:#f92672">=</span>y, meARLlwr<span style="color:#f92672">=</span>ymin, meARLupr<span style="color:#f92672">=</span>ymax)),
-            mcci <span style="color:#f92672">=</span> <span style="color:#a6e22e">list</span>(<span style="color:#a6e22e">mean_cl_normal</span>(mcARL) <span style="color:#f92672">%&gt;%</span>
-                          <span style="color:#a6e22e">rename</span>(mcARLmean<span style="color:#f92672">=</span>y, mcARLlwr<span style="color:#f92672">=</span>ymin, mcARLupr<span style="color:#f92672">=</span>ymax))) <span style="color:#f92672">%&gt;%</span>
-  <span style="color:#a6e22e">unnest</span>(cols <span style="color:#f92672">=</span> <span style="color:#a6e22e">c</span>(t2ci, meci, mcci))
-</code></pre></div><p>Now that we have our control chart ARL metrics, let&rsquo;s check that the in-control ARL is approximately 300. This corresponds when the column <code>shift</code> is 0/0, meaning the mean for both variables is 0. I&rsquo;m selecting columns to exclude the upper and lower values for the confidence intervals.</p>
+rm(splitData)
+</code></pre>
+<p>All that remains is to get those ARL values in a way that is easy to visualize, as well as generate confidence intervals for the simulation as a whole.</p>
+<pre><code class="language-r">ARL &lt;- bind_rows(tmpData) %&gt;%
+  group_by(copula, rho, shift) %&gt;%
+  summarize(t2ci = list(mean_cl_normal(t2ARL) %&gt;%
+                          rename(t2ARLmean=y, t2ARLlwr=ymin, t2ARLupr=ymax)),
+            meci = list(mean_cl_normal(meARL) %&gt;%
+                          rename(meARLmean=y, meARLlwr=ymin, meARLupr=ymax)),
+            mcci = list(mean_cl_normal(mcARL) %&gt;%
+                          rename(mcARLmean=y, mcARLlwr=ymin, mcARLupr=ymax))) %&gt;%
+  unnest(cols = c(t2ci, meci, mcci))
+</code></pre>
+<p>Now that we have our control chart ARL metrics, let&rsquo;s check that the in-control ARL is approximately 300. This corresponds when the column <code>shift</code> is 0/0, meaning the mean for both variables is 0. I&rsquo;m selecting columns to exclude the upper and lower values for the confidence intervals.</p>
 <pre><code># A tibble: 16 x 6
 # Groups:   copula, rho [16]
    copula  rho   shift t2ARLmean meARLmean mcARLmean
@@ -149,58 +200,338 @@ index <span style="color:#f92672">&lt;-</span> <span style="color:#ae81ff">1</sp
 14 Gumbel  0.2   0/0        300.      299.      300.
 15 Gumbel  -0.2  0/0        299.      299.      301.
 16 Gumbel  -0.6  0/0        299.      300.      299.
-</code></pre><p>Things are looking good, with everything being right around 300. We&rsquo;ve got a lot of plots we can make to visualize this, but for illustrating this simply, let&rsquo;s first look at the simplest, the Hotelling T^2 control chart, looking at a sample control chart as well as the ARL values for both in control and out of control for the different correlation.</p>
+</code></pre>
+<p>Things are looking good, with everything being right around 300. We&rsquo;ve got a lot of plots we can make to visualize this, but for illustrating this simply, let&rsquo;s first look at the simplest, the Hotelling T^2 control chart, looking at a sample control chart as well as the ARL values for both in control and out of control for the different correlation.</p>
 <p>Let&rsquo;s take a look at two of the runs for the Normal copula with a correlation of 0.6, one for when there is no shift, and one where just one of the two variables has shifted by 3.</p>
-<p><img src="https://user-images.githubusercontent.com/2358/119735818-be480d00-be31-11eb-9ab6-53f95605a974.png" alt="t2run1"></p>
-<p><img src="https://user-images.githubusercontent.com/2358/119735815-bdaf7680-be31-11eb-9f08-b46006433f4f.png" alt="t2run1t2"></p>
+<p><img class="img-zoomable" src="https://user-images.githubusercontent.com/2358/119735818-be480d00-be31-11eb-9ab6-53f95605a974.png" alt="t2run1" />
+</p>
+<p><img class="img-zoomable" src="https://user-images.githubusercontent.com/2358/119735815-bdaf7680-be31-11eb-9f08-b46006433f4f.png" alt="t2run1t2" />
+</p>
 <p>We see in this case with no shift, that only 3 points fall above the upper control limit (UCL), which for 1000 points, that is what we would roughly expect to encounter.</p>
-<p><img src="https://user-images.githubusercontent.com/2358/119735813-bd16e000-be31-11eb-9b1c-0ce04e00a0bc.png" alt="t2run1shifted"></p>
-<p><img src="https://user-images.githubusercontent.com/2358/119735808-bbe5b300-be31-11eb-9777-d3cb79a4cf93.png" alt="t2run1shiftedt2"></p>
+<p><img class="img-zoomable" src="https://user-images.githubusercontent.com/2358/119735813-bd16e000-be31-11eb-9b1c-0ce04e00a0bc.png" alt="t2run1shifted" />
+</p>
+<p><img class="img-zoomable" src="https://user-images.githubusercontent.com/2358/119735808-bbe5b300-be31-11eb-9777-d3cb79a4cf93.png" alt="t2run1shiftedt2" />
+</p>
 <p>When simulating one of the variables being out of control with a shift of 3, we see we get a lot of points above the UCL and registered as out of control. This is exactly what we would like to happen, as in a production environment, we would want to detect this change and take action to correct it.</p>
 <p>Finally, let&rsquo;s look at an overall summary of the performance for Hotelling T^2 charts for these different copulas and correlations.</p>
-<p><img src="https://user-images.githubusercontent.com/2358/119735840-c56f1b00-be31-11eb-8eaa-2979a2c2135c.png" alt="t2poshigh"></p>
-<p><img src="https://user-images.githubusercontent.com/2358/119735836-c4d68480-be31-11eb-8b0c-91d749f4a3e9.png" alt="t2poslow"></p>
-<p><img src="https://user-images.githubusercontent.com/2358/119735838-c4d68480-be31-11eb-9297-9f327bca0bab.png" alt="t2neglow"></p>
-<p><img src="https://user-images.githubusercontent.com/2358/119735834-c43dee00-be31-11eb-93e3-096dc710be78.png" alt="t2neghigh"></p>
+<p><img class="img-zoomable" src="https://user-images.githubusercontent.com/2358/119735840-c56f1b00-be31-11eb-8eaa-2979a2c2135c.png" alt="t2poshigh" />
+</p>
+<p><img class="img-zoomable" src="https://user-images.githubusercontent.com/2358/119735836-c4d68480-be31-11eb-8b0c-91d749f4a3e9.png" alt="t2poslow" />
+</p>
+<p><img class="img-zoomable" src="https://user-images.githubusercontent.com/2358/119735838-c4d68480-be31-11eb-9297-9f327bca0bab.png" alt="t2neglow" />
+</p>
+<p><img class="img-zoomable" src="https://user-images.githubusercontent.com/2358/119735834-c43dee00-be31-11eb-93e3-096dc710be78.png" alt="t2neghigh" />
+</p>
 <p>The curious thing we see with these four graphs is that how well the T^2 performs for detecting different shifts varies between copula type and the strength of the correlation. For my next and final post on this project, I want to delve into the different types of correlations we&rsquo;re working with here and how they are structured and how that changes the performance of the Hotelling T^2 control chart.</p>
 
     </div>
-  </article>
-
-  
+</article>
 
 
-</main>
 
-      <footer class="footer">
-        <ul class="footer-links">
-          <li>
-            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
-          </li>
-          <li>
-            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
-          </li>
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
         </ul>
-      </footer>
-
     </div>
     
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/heril" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://twitter.com/heril" target="_blank"><span>Twitter</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/classification/">Classification</a>
+            </span>
+            
+            <span>
+                <a href="/tags/data-science/">Data Science</a>
+            </span>
+            
+            <span>
+                <a href="/tags/dungeons-and-dragons/">Dungeons and Dragons</a>
+            </span>
+            
+            <span>
+                <a href="/tags/ggplot/">ggplot</a>
+            </span>
+            
+            <span>
+                <a href="/tags/machine-learning/">Machine Learning</a>
+            </span>
+            
+            <span>
+                <a href="/tags/multivariate/">Multivariate</a>
+            </span>
+            
+            <span>
+                <a href="/tags/plot/">plot</a>
+            </span>
+            
+            <span>
+                <a href="/tags/probability/">Probability</a>
+            </span>
+            
+            <span>
+                <a href="/tags/probability-distribution/">Probability Distribution</a>
+            </span>
+            
+            <span>
+                <a href="/tags/process-control/">Process Control</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">Python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/r/">R</a>
+            </span>
+            
+            <span>
+                <a href="/tags/r-markdown/">R Markdown</a>
+            </span>
+            
+            <span>
+                <a href="/tags/random-forest/">Random Forest</a>
+            </span>
+            
+            <span>
+                <a href="/tags/regression/">regression</a>
+            </span>
+            
+            <span>
+                <a href="/tags/simulation/">Simulation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/spc/">SPC</a>
+            </span>
+            
+            <span>
+                <a href="/tags/trend-analysis/">Trend Analysis</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents"></nav></div>
+</aside>
 
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/heril" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://twitter.com/heril" target="_blank"><span>Twitter</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/classification/">Classification</a>
+            </span>
+            
+            <span>
+                <a href="/tags/data-science/">Data Science</a>
+            </span>
+            
+            <span>
+                <a href="/tags/dungeons-and-dragons/">Dungeons and Dragons</a>
+            </span>
+            
+            <span>
+                <a href="/tags/ggplot/">ggplot</a>
+            </span>
+            
+            <span>
+                <a href="/tags/machine-learning/">Machine Learning</a>
+            </span>
+            
+            <span>
+                <a href="/tags/multivariate/">Multivariate</a>
+            </span>
+            
+            <span>
+                <a href="/tags/plot/">plot</a>
+            </span>
+            
+            <span>
+                <a href="/tags/probability/">Probability</a>
+            </span>
+            
+            <span>
+                <a href="/tags/probability-distribution/">Probability Distribution</a>
+            </span>
+            
+            <span>
+                <a href="/tags/process-control/">Process Control</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">Python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/r/">R</a>
+            </span>
+            
+            <span>
+                <a href="/tags/r-markdown/">R Markdown</a>
+            </span>
+            
+            <span>
+                <a href="/tags/random-forest/">Random Forest</a>
+            </span>
+            
+            <span>
+                <a href="/tags/regression/">regression</a>
+            </span>
+            
+            <span>
+                <a href="/tags/simulation/">Simulation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/spc/">SPC</a>
+            </span>
+            
+            <span>
+                <a href="/tags/trend-analysis/">Trend Analysis</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents"></nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
 
-
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-
-
-
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
-<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
-
-
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2020-2021
+                <a href="https://heril.github.io">Spencer R Hall</a>
+                 | <a href="https://github.com/dsrkafuu/hugo-theme-fuji">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+            </span>
+        </div>
+    </div>
+</footer>
 
     
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
-    
-  </body>
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
 </html>
-

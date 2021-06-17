@@ -2,21 +2,23 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Probability on Data Communications</title>
-    <link>/tags/probability/</link>
+    <link>https://heril.github.io/tags/probability/</link>
     <description>Recent content in Probability on Data Communications</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Fri, 23 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="/tags/probability/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <lastBuildDate>Fri, 23 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://heril.github.io/tags/probability/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Odds of winning constant probability games against one person</title>
-      <link>/2021/04/23/odds-of-winning-constant-probability-games-against-one-person/</link>
+      <link>https://heril.github.io/2021/04/23/odds-of-winning-constant-probability-games-against-one-person/</link>
       <pubDate>Fri, 23 Apr 2021 00:00:00 +0000</pubDate>
       
-      <guid>/2021/04/23/odds-of-winning-constant-probability-games-against-one-person/</guid>
+      <guid>https://heril.github.io/2021/04/23/odds-of-winning-constant-probability-games-against-one-person/</guid>
       <description>Probabilities and games.
 Two simple games used to illustrate certain features of calculating probabilities are as follows:
 You and a friend take turns flipping a fair coin. The first person to flip heads wins. If you go first, what are your chances of winning?
-You and a friend take turns rolling a fair die with 6 sides. The first person to roll a 6 wins. If you go first, what are your chances of winning.</description>
+You and a friend take turns rolling a fair die with 6 sides. The first person to roll a 6 wins. If you go first, what are your chances of winning.
+These end up being very similar problems, and can be generalized.
+For convenience, I’ll talk about the rolling a die version. To start we’ll walk through a couple winning scenarios to look for a pattern.</description>
     </item>
     
   </channel>

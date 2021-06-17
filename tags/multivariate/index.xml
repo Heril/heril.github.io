@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Multivariate on Data Communications</title>
-    <link>/tags/multivariate/</link>
+    <link>https://heril.github.io/tags/multivariate/</link>
     <description>Recent content in Multivariate on Data Communications</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Mon, 04 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="/tags/multivariate/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <lastBuildDate>Mon, 04 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://heril.github.io/tags/multivariate/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Multivariate Statistic Process Control method comparison Part 1: Simulating   correlated data and optimizing data generation.</title>
-      <link>/2021/01/04/multivariate-statistic-process-control-method-comparison-part-1-simulating-correlated-data-and-optimizing-data-generation/</link>
+      <link>https://heril.github.io/2021/01/04/multivariate-statistic-process-control-method-comparison-part-1-simulating-correlated-data-and-optimizing-data-generation/</link>
       <pubDate>Mon, 04 Jan 2021 00:00:00 +0000</pubDate>
       
-      <guid>/2021/01/04/multivariate-statistic-process-control-method-comparison-part-1-simulating-correlated-data-and-optimizing-data-generation/</guid>
+      <guid>https://heril.github.io/2021/01/04/multivariate-statistic-process-control-method-comparison-part-1-simulating-correlated-data-and-optimizing-data-generation/</guid>
       <description>Time to mix it up a bit from my usual game probability related simulation. This week I want to talk about a project I worked on last year in doing simulations for Statistical Process Control.
 For a brief primer, Statistical Process Control or SPC is a method used for monitoring something like a manufacturing process. It&amp;rsquo;s a form of time series analysis where you monitor results of some statistic taken from observing the process and then compare that statistic to a set of limits on a control chart to determine whether or not the distribution of that statistic has likely changed.</description>
     </item>

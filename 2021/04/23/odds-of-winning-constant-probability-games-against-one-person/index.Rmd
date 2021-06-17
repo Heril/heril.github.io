@@ -1,0 +1,67 @@
+---
+title: Odds of winning constant probability games against one person
+author: Spencer R Hall
+date: '2021-04-23'
+slug: odds-of-winning-constant-probability-games-against-one-person
+categories: []
+tags:
+  - Probability
+---
+
+Probabilities and games.
+
+Two simple games used to illustrate certain features of calculating probabilities are as follows:
+
+You and a friend take turns flipping a fair coin. The first person to flip heads wins. If you go first, what are your chances of winning?
+
+You and a friend take turns rolling a fair die with 6 sides. The first person to roll a 6 wins. If you go first, what are your chances of winning.
+
+These end up being very similar problems, and can be generalized.
+
+For convenience, I'll talk about the rolling a die version. To start we'll walk through a couple winning scenarios to look for a pattern.
+
+The simplest way to win when you go first is for you roll a 6 on your first turn. On a fair die, this is simply 1/6.
+
+If you don't win on your first turn, what's the next simplest way to win? Your first roll to not be a 6, your partner's first roll to also not be a 6, and then your second roll to be a 6. The odds of each of these independent events is respectively 5/6, 5/6, and 1/6. The odds of this happening in sequence is the product of these,
+
+$$ \frac{5}{6} \times \frac{5}{6} \times \frac{1}{6} = 11.6\%$$
+
+It might be clear at this point, but every scenario where when you go first that you win, you end with rolling a 6 (1/6 odds) and you and your opponent having an equal number of turns that no one rolled a 6 (5/6 each for both you and your partner), where this can happen anywhere from 0 or more times.
+
+What then are the odds that you win when you go first on your second turn or sooner? Simply the sum of your odds of winning on the first turn, and the odds of winning on your second turn.
+
+$$\frac{1}{6} + \frac{25}{216} = \frac{61}{216} = 28.2\%$$
+
+So to find out your absolute odds of winning when you go first you just need to keep on adding up these winning scenarios. Using infinite sums you can calculate this
+
+$$\sum_{n=1}^{\infty}\left(\frac{1}{6}\right)\left(\frac{5}{6}\right)^{2n-2}$$
+
+Where n is the number of turns you take.
+
+For those familiar with infinite sums of geometric series, this can be more conveniently written as
+
+$$\sum_{n=1}^{\infty}\left(\frac{1}{6}\right)\left(\frac{25}{36}\right)^{n-1}$$
+
+
+
+(Because 5/6 squared is 25/36)
+
+This fits the form of the common form of when 0<r<1
+
+$$\sum_{n=1}^{\infty}ar^{n-1} = \frac{a}{1-r}$$
+So the odds of this is
+$$\frac{\frac{1}{6}}{1 - \frac{25}{36}} = \frac{\frac{1}{6}}{\frac{11}{36}} = \frac{6}{11} = 54.5454\%$$
+
+Given the common form above, this can be generalized for every probability game of the same nature such as flipping coins or other games where you and a partner take turns and the odds of the current player winning is constant.
+
+If the odds of winning during any of your turns is p, where 0<p<1, then the odds of winning at some point is
+
+$$\frac{p}{1-(1-p)^2}$$
+
+Simplifying this gives
+
+$$\frac{p}{1-(1-2p+p^2)} = \frac{p}{2p - p^2} = \frac{1}{2-p}$$
+
+Taking a look at any possible value for p between 0 and 1, we can see that in going first you always have at least a 50% chance of winning, with those odds increasing as p approaches 1.
+
+![graph](https://user-images.githubusercontent.com/2358/115922029-32f1eb00-a431-11eb-92a6-5b8e234fb7bf.png)

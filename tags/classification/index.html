@@ -1,98 +1,427 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
 <meta name="generator" content="Hugo 0.83.1" />
 
 
+<link href='https://heril.github.io/favicon.ico' rel='icon' type='image/x-icon'/>
+<meta name="theme-color" content="#ffffff" />
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
 <title>Classification - Data Communications</title>
-<meta property="og:title" content="Classification - Data Communications">
 
 
-  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+<meta name="author" content="Spencer R Hall" />
+
+
+<meta name="description" content="A blog on Data Science and Statistics." />
+
+
+<link rel="alternate" type="application/rss+xml" href="https://heril.github.io/tags/classification/index.xml" title="Data Communications" />
+
+<meta property="og:title" content="Classification" />
+<meta name="twitter:title" content="Classification" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://heril.github.io/tags/classification/" /><meta property="og:image" content="https://heril.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://heril.github.io/img/og.png" /><meta property="og:updated_time" content="2020-12-24T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
 
 
 
+
+<link rel="stylesheet" href="https://heril.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="auto"
+  data-theme-auto='true'
+  >
+    <script data-cfasync="false">
   
-
-
-
-
-
-<link href="/tags/classification/index.xml" rel="alternate" type="application/rss+xml" title="Data Communications" />
-
-
-
-<link rel="stylesheet" href="/css/fonts.css" media="all">
-<link rel="stylesheet" href="/css/main.css" media="all">
-
-
-
-  </head>
-  <body>
-    <div class="wrapper">
-      <header class="header">
-        <nav class="nav">
-  <a href="/" class="nav-logo">
-    <img src="/images/logo.png"
-         width="50"
-         height="50"
-         alt="Logo">
-  </a>
-
-  <ul class="nav-links">
-    
-    <li><a href="/about/">About</a></li>
-    
-    <li><a href="https://github.com/heril">GitHub</a></li>
-    
-    <li><a href="https://twitter.com/heril">Twitter</a></li>
-    
-  </ul>
-</nav>
-
-      </header>
-
-
-<main class="content" role="main">
-
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
   
-  <div class="archive">
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://heril.github.io">Data Communications</a>
+            
+            <span class="title-sub">A blog on Data Science and Statistics.</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+
+<div class="page-info">
+  <span>Posts with the tag Classification: </span>
+</div>
+
+
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://heril.github.io/2020/12/24/using-r-and-random-forest-to-predict-diabetes-risk/">Using R and Random Forest to predict Diabetes Risk</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2020-12-24</span>
+
+
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;3 minutes</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/r">R</a>&nbsp;<a href="/tags/random-forest">Random Forest</a>&nbsp;<a href="/tags/machine-learning">Machine Learning</a>&nbsp;<a href="/tags/classification">Classification</a>&nbsp;<a href="/tags/data-science">Data Science</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    Time for something a bit different from my previous posts, but hopefully more common in the future.
+I was looking through the UCI Machine Learning Repository for a couple of data sets I could use for some simple machine learning problems to try interesting problems and keep my abilities sharp. This week I found the Early Stage Diabetes Risk Prediction. This comes from a paper on early prediction of diabetes risk. The abstract goes over the methods used, indicating Random Forest as doing particularly well. Since I don’t have access to the actual paper, I wanted to try out using R to try this model out.
+  </div>
+</div>
+
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/heril" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://twitter.com/heril" target="_blank"><span>Twitter</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/classification/">Classification</a>
+            </span>
+            
+            <span>
+                <a href="/tags/data-science/">Data Science</a>
+            </span>
+            
+            <span>
+                <a href="/tags/dungeons-and-dragons/">Dungeons and Dragons</a>
+            </span>
+            
+            <span>
+                <a href="/tags/ggplot/">ggplot</a>
+            </span>
+            
+            <span>
+                <a href="/tags/machine-learning/">Machine Learning</a>
+            </span>
+            
+            <span>
+                <a href="/tags/multivariate/">Multivariate</a>
+            </span>
+            
+            <span>
+                <a href="/tags/plot/">plot</a>
+            </span>
+            
+            <span>
+                <a href="/tags/probability/">Probability</a>
+            </span>
+            
+            <span>
+                <a href="/tags/probability-distribution/">Probability Distribution</a>
+            </span>
+            
+            <span>
+                <a href="/tags/process-control/">Process Control</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">Python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/r/">R</a>
+            </span>
+            
+            <span>
+                <a href="/tags/r-markdown/">R Markdown</a>
+            </span>
+            
+            <span>
+                <a href="/tags/random-forest/">Random Forest</a>
+            </span>
+            
+            <span>
+                <a href="/tags/regression/">regression</a>
+            </span>
+            
+            <span>
+                <a href="/tags/simulation/">Simulation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/spc/">SPC</a>
+            </span>
+            
+            <span>
+                <a href="/tags/trend-analysis/">Trend Analysis</a>
+            </span>
+            
+        </div>
+    </div>
     
     
     
-    <h2 class="archive-title">2020</h2>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
     
-    <article class="archive-item">
-      <a href="/2020/12/24/using-r-and-random-forest-to-predict-diabetes-risk/" class="archive-item-link">Using R and Random Forest to predict Diabetes Risk</a>
-      <span class="archive-item-date">
-        2020-12-24
-      </span>
-    </article>
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/heril" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://twitter.com/heril" target="_blank"><span>Twitter</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/classification/">Classification</a>
+            </span>
+            
+            <span>
+                <a href="/tags/data-science/">Data Science</a>
+            </span>
+            
+            <span>
+                <a href="/tags/dungeons-and-dragons/">Dungeons and Dragons</a>
+            </span>
+            
+            <span>
+                <a href="/tags/ggplot/">ggplot</a>
+            </span>
+            
+            <span>
+                <a href="/tags/machine-learning/">Machine Learning</a>
+            </span>
+            
+            <span>
+                <a href="/tags/multivariate/">Multivariate</a>
+            </span>
+            
+            <span>
+                <a href="/tags/plot/">plot</a>
+            </span>
+            
+            <span>
+                <a href="/tags/probability/">Probability</a>
+            </span>
+            
+            <span>
+                <a href="/tags/probability-distribution/">Probability Distribution</a>
+            </span>
+            
+            <span>
+                <a href="/tags/process-control/">Process Control</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">Python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/r/">R</a>
+            </span>
+            
+            <span>
+                <a href="/tags/r-markdown/">R Markdown</a>
+            </span>
+            
+            <span>
+                <a href="/tags/random-forest/">Random Forest</a>
+            </span>
+            
+            <span>
+                <a href="/tags/regression/">regression</a>
+            </span>
+            
+            <span>
+                <a href="/tags/simulation/">Simulation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/spc/">SPC</a>
+            </span>
+            
+            <span>
+                <a href="/tags/trend-analysis/">Trend Analysis</a>
+            </span>
+            
+        </div>
+    </div>
     
     
   </div>
+</aside>
+    </main>
 
-</main>
-
-      <footer class="footer">
-        <ul class="footer-links">
-          <li>
-            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
-          </li>
-          <li>
-            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
-          </li>
-        </ul>
-      </footer>
-
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2020-2021
+                <a href="https://heril.github.io">Spencer R Hall</a>
+                 | <a href="https://github.com/dsrkafuu/hugo-theme-fuji">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+            </span>
+        </div>
     </div>
-    
+</footer>
 
     
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
-    
-  </body>
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
 </html>
-

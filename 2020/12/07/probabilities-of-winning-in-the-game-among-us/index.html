@@ -12,7 +12,7 @@
 <meta name="generator" content="Hugo 0.83.1" />
 
 
-<link href='https://heril.github.io/favicon.ico' rel='icon' type='image/x-icon'/>
+<link href='https://blog.elementaldatascience.com/favicon.ico' rel='icon' type='image/x-icon'/>
 <meta name="theme-color" content="#ffffff" />
 <script type="text/javascript"
   src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
@@ -26,7 +26,7 @@
 </script>
 
 
-<title>Probabilities of Winning in the game Among Us - Data Communications</title>
+<title>Probabilities of Winning in the game Among Us - Elemental Data Science</title>
 
 
 <meta name="author" content="Spencer R Hall" />
@@ -39,14 +39,14 @@
 <meta property="og:title" content="Probabilities of Winning in the game Among Us" />
 <meta name="twitter:title" content="Probabilities of Winning in the game Among Us" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://heril.github.io/2020/12/07/probabilities-of-winning-in-the-game-among-us/" /><meta property="og:description" content="Back in August of this year, the game Among Us leapt in popularity. A social game where crewmates try to complete tasks while staying alive. At the same time, impostors try to kill off the innocent players while also sabotaging the crew. It’s a fun, interactive twist on in person social games such as Werewolf or Mafia.
+<meta property="og:url" content="http://blog.elementaldatascience.com/2020/12/07/probabilities-of-winning-in-the-game-among-us/" /><meta property="og:description" content="Back in August of this year, the game Among Us leapt in popularity. A social game where crewmates try to complete tasks while staying alive. At the same time, impostors try to kill off the innocent players while also sabotaging the crew. It’s a fun, interactive twist on in person social games such as Werewolf or Mafia.
 With the interactive gameplay, rounds end when a player reports a dead body or call an emergency meeting and the remaining players get a chance to discus and potentially vote out one player.
 This got me thinking, ignoring the various strategies for the game, and avoiding where impostors kill off innocent players, if players were just removed/voted off randomly, what would be the odds of a crewmate or an impostor victory, and with that, the expected win rate overall." />
 <meta name="twitter:description" content="Back in August of this year, the game Among Us leapt in popularity. A social game where crewmates try to complete tasks while staying alive. At the same time, impostors try to kill off the innocent players while also sabotaging the crew. It’s a fun, interactive twist on in person social games such as Werewolf or Mafia.
 With the interactive gameplay, rounds end when a player reports a dead body or call an emergency meeting and the remaining players get a chance to discus and potentially vote out one player.
-This got me thinking, ignoring the various strategies for the game, and avoiding where impostors kill off innocent players, if players were just removed/voted off randomly, what would be the odds of a crewmate or an impostor victory, and with that, the expected win rate overall." /><meta property="og:image" content="https://heril.github.io/img/og.png" />
+This got me thinking, ignoring the various strategies for the game, and avoiding where impostors kill off innocent players, if players were just removed/voted off randomly, what would be the odds of a crewmate or an impostor victory, and with that, the expected win rate overall." /><meta property="og:image" content="http://blog.elementaldatascience.com/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://heril.github.io/img/og.png" /><meta property="article:published_time" content="2020-12-07T00:00:00+00:00" /><meta property="article:modified_time" content="2020-12-07T00:00:00+00:00" />
+<meta name="twitter:image" content="http://blog.elementaldatascience.com/img/og.png" /><meta property="article:published_time" content="2020-12-07T00:00:00+00:00" /><meta property="article:modified_time" content="2020-12-07T00:00:00+00:00" />
 
 
 <style>
@@ -64,7 +64,7 @@ This got me thinking, ignoring the various strategies for the game, and avoiding
 
 
 
-<link rel="stylesheet" href="https://heril.github.io/assets/css/fuji.min.css" />
+<link rel="stylesheet" href="http://blog.elementaldatascience.com/assets/css/fuji.min.css" />
 
 
 
@@ -96,7 +96,7 @@ This got me thinking, ignoring the various strategies for the game, and avoiding
     <header>
     <div class="container-lg clearfix">
         <div class="col-12 header">
-            <a class="title-main" href="https://heril.github.io">Data Communications</a>
+            <a class="title-main" href="http://blog.elementaldatascience.com">Elemental Data Science</a>
             
             <span class="title-sub">A blog on Data Science and Statistics.</span>
             
@@ -112,7 +112,7 @@ This got me thinking, ignoring the various strategies for the game, and avoiding
 <article>
     
     <h2 class="post-item post-title">
-        <a href="https://heril.github.io/2020/12/07/probabilities-of-winning-in-the-game-among-us/">Probabilities of Winning in the game Among Us</a>
+        <a href="http://blog.elementaldatascience.com/2020/12/07/probabilities-of-winning-in-the-game-among-us/">Probabilities of Winning in the game Among Us</a>
     </h2>
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2020-12-07</span>
@@ -125,7 +125,7 @@ This got me thinking, ignoring the various strategies for the game, and avoiding
     
     <div class="post-content markdown-body">
         
-<script src="https://heril.github.io/2020/12/07/probabilities-of-winning-in-the-game-among-us/index_files/header-attrs/header-attrs.js"></script>
+<script src="http://blog.elementaldatascience.com/2020/12/07/probabilities-of-winning-in-the-game-among-us/index_files/header-attrs/header-attrs.js"></script>
 
 
 <p>Back in August of this year, the game <em>Among Us</em> leapt in popularity. A social game where crewmates try to complete tasks while staying alive. At the same time, impostors try to kill off the innocent players while also sabotaging the crew. It’s a fun, interactive twist on in person social games such as Werewolf or Mafia.</p>
@@ -180,7 +180,7 @@ This got me thinking, ignoring the various strategies for the game, and avoiding
 }</code></pre>
 <pre class="r"><code>amongusPlot()</code></pre>
 <pre><code>## [1] 0.5975</code></pre>
-<p><img src="https://heril.github.io/2020/12/07/probabilities-of-winning-in-the-game-among-us/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="http://blog.elementaldatascience.com/2020/12/07/probabilities-of-winning-in-the-game-among-us/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>We can see that from about 1000 onward, the result seems to arrive at 0.6</p>
 <p>So apparently randomly voting for a player gives the crewmates a slight advantage. From this we can then calculate what the expected win rate of each player if every game was played this way.</p>
 <p><span class="math inline">\((0.6)*0.8 + (0.4)*0.2 = 0.56\)</span></p>
@@ -473,7 +473,7 @@ This got me thinking, ignoring the various strategies for the game, and avoiding
         <div class="col-12 footer">
             
             <span>&copy; 2020-2021
-                <a href="https://heril.github.io">Spencer R Hall</a>
+                <a href="http://blog.elementaldatascience.com">Spencer R Hall</a>
                  | <a href="https://github.com/heril/heril.github.io">Source code</a> 
                 | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
                    target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"

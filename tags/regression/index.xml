@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>regression on Data Communications</title>
-    <link>https://heril.github.io/tags/regression/</link>
-    <description>Recent content in regression on Data Communications</description>
+    <title>regression on Elemental Data Science</title>
+    <link>http://blog.elementaldatascience.com/tags/regression/</link>
+    <description>Recent content in regression on Elemental Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 24 Nov 2020 21:13:14 -0500</lastBuildDate><atom:link href="https://heril.github.io/tags/regression/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 24 Nov 2020 21:13:14 -0500</lastBuildDate><atom:link href="http://blog.elementaldatascience.com/tags/regression/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Simulating die rolls and testing fairness using a Chi-squared test.</title>
-      <link>https://heril.github.io/2020/11/24/simulating-die-rolls-and-testing-fairness-using-a-chi-squared-test./</link>
+      <link>http://blog.elementaldatascience.com/2020/11/24/simulating-die-rolls-and-testing-fairness-using-a-chi-squared-test./</link>
       <pubDate>Tue, 24 Nov 2020 21:13:14 -0500</pubDate>
       
-      <guid>https://heril.github.io/2020/11/24/simulating-die-rolls-and-testing-fairness-using-a-chi-squared-test./</guid>
+      <guid>http://blog.elementaldatascience.com/2020/11/24/simulating-die-rolls-and-testing-fairness-using-a-chi-squared-test./</guid>
       <description>As someone who enjoys playing Dungeons and Dragons, I also get fascinated by the primitive random number generators used it them, the dice. When I talk dice with friends and internet strangers, the conversation sometimes leans towards discussing whether or not their dice are fair.
 Now if you search for how to test this, you can find a few good answers to explain the various statistical tests that can be used, along with their pros and their cons, so I’m not going to do that here.
 While probabilities of several dice together can get messy really quickly without having to pull out a reference for my courses in Probability, one quick and dirty way we have of checking the odds of results is using simulations, and doing large simulations of die rolls is pretty quick on modern machines.</description>

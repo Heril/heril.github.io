@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Python on Data Communications</title>
-    <link>https://heril.github.io/tags/python/</link>
-    <description>Recent content in Python on Data Communications</description>
+    <title>Python on Elemental Data Science</title>
+    <link>http://blog.elementaldatascience.com/tags/python/</link>
+    <description>Recent content in Python on Elemental Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 08 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://heril.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 08 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://blog.elementaldatascience.com/tags/python/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Using Python and Random Forest to predict Diabetes Risk.</title>
-      <link>https://heril.github.io/2021/01/08/using-python-and-random-forest-to-predict-diabetes-risk/</link>
+      <link>http://blog.elementaldatascience.com/2021/01/08/using-python-and-random-forest-to-predict-diabetes-risk/</link>
       <pubDate>Fri, 08 Jan 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://heril.github.io/2021/01/08/using-python-and-random-forest-to-predict-diabetes-risk/</guid>
+      <guid>http://blog.elementaldatascience.com/2021/01/08/using-python-and-random-forest-to-predict-diabetes-risk/</guid>
       <description>Two weeks ago I wrote a post, Using R and Random Forest to predict Diabetes Risk. Since I am less experienced with using python in machine learning models, and this was a data set that worked out so nicely, I figured I would take an attempt at it.
 First we need to load all the modules and functions we need to use.
 import pandas as pd from matplotlib import pyplot as plt import numpy as np import seaborn as sns from sklearn.model_selection import train_test_split from sklearn.ensemble import RandomForestClassifier from sklearn import metrics  The next thing is just like was done in R, load the data, clean it up a bit for using scikit-learn to create a classification model, and then split our factors from our classification variable.</description>

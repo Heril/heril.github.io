@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Probability on Data Communications</title>
-    <link>https://heril.github.io/tags/probability/</link>
-    <description>Recent content in Probability on Data Communications</description>
+    <title>Probability on Elemental Data Science</title>
+    <link>http://blog.elementaldatascience.com/tags/probability/</link>
+    <description>Recent content in Probability on Elemental Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 23 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://heril.github.io/tags/probability/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 23 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://blog.elementaldatascience.com/tags/probability/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Odds of winning constant probability games against one person</title>
-      <link>https://heril.github.io/2021/04/23/odds-of-winning-constant-probability-games-against-one-person/</link>
+      <link>http://blog.elementaldatascience.com/2021/04/23/odds-of-winning-constant-probability-games-against-one-person/</link>
       <pubDate>Fri, 23 Apr 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://heril.github.io/2021/04/23/odds-of-winning-constant-probability-games-against-one-person/</guid>
+      <guid>http://blog.elementaldatascience.com/2021/04/23/odds-of-winning-constant-probability-games-against-one-person/</guid>
       <description>Probabilities and games.
 Two simple games used to illustrate certain features of calculating probabilities are as follows:
 You and a friend take turns flipping a fair coin. The first person to flip heads wins. If you go first, what are your chances of winning?

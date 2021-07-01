@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Trend Analysis on Data Communications</title>
-    <link>https://heril.github.io/tags/trend-analysis/</link>
-    <description>Recent content in Trend Analysis on Data Communications</description>
+    <title>Trend Analysis on Elemental Data Science</title>
+    <link>http://blog.elementaldatascience.com/tags/trend-analysis/</link>
+    <description>Recent content in Trend Analysis on Elemental Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 26 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://heril.github.io/tags/trend-analysis/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 26 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://blog.elementaldatascience.com/tags/trend-analysis/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Multivariate Statistic Process Control method comparison Part 2: Generating   control limits and initial look </title>
-      <link>https://heril.github.io/2021/05/26/multivariate-statistic-process-control-method-comparison-part-2-generating-control-limits-and-initial-look/</link>
+      <link>http://blog.elementaldatascience.com/2021/05/26/multivariate-statistic-process-control-method-comparison-part-2-generating-control-limits-and-initial-look/</link>
       <pubDate>Wed, 26 May 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://heril.github.io/2021/05/26/multivariate-statistic-process-control-method-comparison-part-2-generating-control-limits-and-initial-look/</guid>
+      <guid>http://blog.elementaldatascience.com/2021/05/26/multivariate-statistic-process-control-method-comparison-part-2-generating-control-limits-and-initial-look/</guid>
       <description>Earlier this year, I posted the first part of a write-up for a project I worked on during a project I worked on last year.
 As a reminder, my project involved taking 4 different types of correlation, test the baseline and 8 different data shifts, generating 1000 simulations with 100 points of data each. I then compared how three different multivariate control charts, Hotelling T^2, MEWMA, and MCUSUM, were in detecting a shift while holding the false rate fixed over all simulations.
 For this I use the pretty standard for in control average run length (ARL) of 300. This means, on average when the process is in control, you can expect to see an out of control data point in any 300 sequential points.</description>

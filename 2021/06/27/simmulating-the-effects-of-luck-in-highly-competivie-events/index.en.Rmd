@@ -1,0 +1,73 @@
+---
+title: Simmulating the effects of luck in highly competivie events
+author: Spencer R Hall
+date: '2021-06-27'
+slug: simmulating-the-effects-of-luck-in-highly-competivie-events
+categories:
+  - R
+tags:
+  - Data Science
+  - R
+  - Simulation
+---
+To Be Finished
+```{r setup, include=FALSE}
+library(tidyverse)
+minselected <- 10
+R <- 10
+selected <- c(0.0005, 0.001, 0.01, 0.1)
+N <- 1/min(selected)*minselected
+luckfactor <- c(0.01, 0.02, 0.05, 0.10)
+minscore <- 1
+maxscore <- 100
+results <- vector(mode = "list", length = length(luckfactor))
+for (i in 1:length(luckfactor)) {
+  results[[i]] <- vector(mode = "list", length = length(selected))
+  for (j in 1:length(selected)) {
+    results[[i]][[j]] <- matrix(nrow = R, ncol = 5)
+  }
+}
+```
+
+```{r simulation}
+
+for (i in 1:length(luckfactor)) {
+  for (j in 1:length(selected)) {
+    for (k in 1:R) {
+      simulationresults <- tibble(Skill = runif(n = N, min = minscore, max = maxscore), Luck = runif(n = N, min = minscore, max = maxscore)) %>%
+        mutate(Score = Skill * (1 - luckfactor[i]) + Luck * luckfactor[i])
+      
+      luckyFew <- simulationresults %>%
+        mutate(SkillRank = N - rank(Skill) + 1,
+               ScoreRank = N - rank(Score) + 1,
+               SkillSelected = SkillRank <= selected[j] * N) %>%
+        arrange(ScoreRank) %>%
+        head(selected[j] * N)
+      
+      
+      results[[i]][[j]][k,] <- c(mean(luckyFew$Skill), mean(luckyFew$Luck), sum(luckyFew$SkillSelected), luckfactor[i], selected[j])
+    }
+    results[[i]][[j]] <- as.data.frame(results[[i]][[j]])
+  }
+  results[[i]] <- bind_rows(results[[i]])
+}
+```
+
+```{r}
+results <- bind_rows(results)
+
+colnames(results) <- c("Skill", "Luck", "SkillSelected", "LuckFactor", "ProportionSelected")
+
+results$LuckFactor <- as.factor(results$LuckFactor)
+results$ProportionSelectedfct <- as.factor(results$ProportionSelected)
+
+results %>%
+  group_by(LuckFactor, ProportionSelectedfct) %>%
+  summarize(meanSkill = mean(Skill),
+            meanLuck = mean(Luck),
+            meanSelected = mean(SkillSelected),
+            medianSkill = median(Skill),
+            medianLuck = median(Luck),
+            medianSelected = median(SkillSelected),
+            propSelected = mean(SkillSelected/ProportionSelected)/N)
+````

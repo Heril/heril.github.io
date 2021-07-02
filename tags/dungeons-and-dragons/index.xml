@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Dungeons and Dragons on Elemental Data Science</title>
-    <link>http://blog.elementaldatascience.com/tags/dungeons-and-dragons/</link>
+    <link>https://blog.elementaldatascience.com/tags/dungeons-and-dragons/</link>
     <description>Recent content in Dungeons and Dragons on Elemental Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 28 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://blog.elementaldatascience.com/tags/dungeons-and-dragons/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 28 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.elementaldatascience.com/tags/dungeons-and-dragons/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>The Effect of the Advantage/Disadvantage in Dungeons and Dragons 5E on Success, Failure and Damage</title>
-      <link>http://blog.elementaldatascience.com/2020/12/28/the-effect-of-the-advantage-disadvantage-in-dungeons-and-dragons-5e-on-success-failure-and-damage/</link>
+      <link>https://blog.elementaldatascience.com/2020/12/28/the-effect-of-the-advantage-disadvantage-in-dungeons-and-dragons-5e-on-success-failure-and-damage/</link>
       <pubDate>Mon, 28 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://blog.elementaldatascience.com/2020/12/28/the-effect-of-the-advantage-disadvantage-in-dungeons-and-dragons-5e-on-success-failure-and-damage/</guid>
+      <guid>https://blog.elementaldatascience.com/2020/12/28/the-effect-of-the-advantage-disadvantage-in-dungeons-and-dragons-5e-on-success-failure-and-damage/</guid>
       <description>So, after my last Dungeons and Dragons post, I got asked about the Advantage/Disadvantage mechanic in Dungeons and Dragons Fifth Edition, so let’s look into that a bit.
 In D&amp;amp;D, to succeed at a task, you roll a 20-sided die(d20) and with some math and checking with your Dungeon Master (DM), you determine if you succeed or not. In previous editions you would add your character’s modifier, as well as any additional bonuses or penalties due to the specific scenario. Fifth edition got rid of that except for one specific case, and instead replaced it with Advantage/Disadvantage.
 Simply put, if your character is in some sort of advantageous situation when attempting a task, you get Advantage.</description>
@@ -20,10 +20,10 @@ Simply put, if your character is in some sort of advantageous situation when att
     
     <item>
       <title>The likelihood of getting or beating an array of stats in D&amp;D Part 2</title>
-      <link>http://blog.elementaldatascience.com/2020/12/21/the-likelihood-of-getting-or-beating-an-array-of-stats-in-d-d-part-2/</link>
+      <link>https://blog.elementaldatascience.com/2020/12/21/the-likelihood-of-getting-or-beating-an-array-of-stats-in-d-d-part-2/</link>
       <pubDate>Mon, 21 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://blog.elementaldatascience.com/2020/12/21/the-likelihood-of-getting-or-beating-an-array-of-stats-in-d-d-part-2/</guid>
+      <guid>https://blog.elementaldatascience.com/2020/12/21/the-likelihood-of-getting-or-beating-an-array-of-stats-in-d-d-part-2/</guid>
       <description>So, after sharing my post from last week about probabilities and stat arrays. Now, the way I determine which array is better is clearly overly arbitrary. Under that system the standard array is better than an array of (7, 18, 18, 18, 18, 18), when in reality any player looking for maximal stats would take that over the standard array (8, 10, 12, 13, 14, 15). So maybe there is a different way to compare these.
 Now the first approach would be to just take the ability modifier. Each integer from 3-18 maps to an integer from -4 to +4 that is used for almost everything in the game (except for carrying capacity, which uses the actual Strength score).</description>
     </item>

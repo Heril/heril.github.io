@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Random Forest on Elemental Data Science</title>
-    <link>http://blog.elementaldatascience.com/tags/random-forest/</link>
+    <link>https://blog.elementaldatascience.com/tags/random-forest/</link>
     <description>Recent content in Random Forest on Elemental Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 08 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://blog.elementaldatascience.com/tags/random-forest/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 08 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.elementaldatascience.com/tags/random-forest/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Using Python and Random Forest to predict Diabetes Risk.</title>
-      <link>http://blog.elementaldatascience.com/2021/01/08/using-python-and-random-forest-to-predict-diabetes-risk/</link>
+      <link>https://blog.elementaldatascience.com/2021/01/08/using-python-and-random-forest-to-predict-diabetes-risk/</link>
       <pubDate>Fri, 08 Jan 2021 00:00:00 +0000</pubDate>
       
-      <guid>http://blog.elementaldatascience.com/2021/01/08/using-python-and-random-forest-to-predict-diabetes-risk/</guid>
+      <guid>https://blog.elementaldatascience.com/2021/01/08/using-python-and-random-forest-to-predict-diabetes-risk/</guid>
       <description>Two weeks ago I wrote a post, Using R and Random Forest to predict Diabetes Risk. Since I am less experienced with using python in machine learning models, and this was a data set that worked out so nicely, I figured I would take an attempt at it.
 First we need to load all the modules and functions we need to use.
 import pandas as pd from matplotlib import pyplot as plt import numpy as np import seaborn as sns from sklearn.model_selection import train_test_split from sklearn.ensemble import RandomForestClassifier from sklearn import metrics  The next thing is just like was done in R, load the data, clean it up a bit for using scikit-learn to create a classification model, and then split our factors from our classification variable.</description>
@@ -20,10 +20,10 @@ import pandas as pd from matplotlib import pyplot as plt import numpy as np impo
     
     <item>
       <title>Using R and Random Forest to predict Diabetes Risk</title>
-      <link>http://blog.elementaldatascience.com/2020/12/24/using-r-and-random-forest-to-predict-diabetes-risk/</link>
+      <link>https://blog.elementaldatascience.com/2020/12/24/using-r-and-random-forest-to-predict-diabetes-risk/</link>
       <pubDate>Thu, 24 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://blog.elementaldatascience.com/2020/12/24/using-r-and-random-forest-to-predict-diabetes-risk/</guid>
+      <guid>https://blog.elementaldatascience.com/2020/12/24/using-r-and-random-forest-to-predict-diabetes-risk/</guid>
       <description>Time for something a bit different from my previous posts, but hopefully more common in the future.
 I was looking through the UCI Machine Learning Repository for a couple of data sets I could use for some simple machine learning problems to try interesting problems and keep my abilities sharp. This week I found the Early Stage Diabetes Risk Prediction. This comes from a paper on early prediction of diabetes risk. The abstract goes over the methods used, indicating Random Forest as doing particularly well. Since I don’t have access to the actual paper, I wanted to try out using R to try this model out.</description>
     </item>
